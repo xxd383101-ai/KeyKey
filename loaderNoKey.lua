@@ -73,7 +73,7 @@ shadow.ScaleType = Enum.ScaleType.Slice
 shadow.SliceCenter = Rect.new(10, 10, 118, 118)
 shadow.Parent = mainFrame
 
--- Заголовок
+-- Заголовок (для перетаскивания)
 local titleFrame = Instance.new("Frame")
 titleFrame.Size = UDim2.new(1, 0, 0, 40)
 titleFrame.Position = UDim2.new(0, 0, 0, 0)
@@ -281,51 +281,55 @@ local function setSpeed(value)
     end
 end
 
--- Fly System (как в админ команде)
+-- Fly System (РАБОЧИЙ полёт)
+local flyConnection
 local function toggleFly(state)
     flying = state
     local character = LocalPlayer.Character
     if not character then return end
     
+    local humanoid = character:FindFirstChildOfClass("Humanoid")
+    local root = character:FindFirstChild("HumanoidRootPart")
+    
+    if not humanoid or not root then return end
+    
     if flying then
         -- Включаем полёт
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
-        if humanoid then
-            humanoid.PlatformStand = true
-        end
+        humanoid.PlatformStand = true
         
-        -- Создаем BodyVelocity для управления полётом
+        -- Создаем физические объекты для полёта
+        local bodyGyro = Instance.new("BodyGyro")
+        bodyGyro.P = 10000
+        bodyGyro.MaxTorque = Vector3.new(40000, 40000, 40000)
+        bodyGyro.CFrame = root.CFrame
+        bodyGyro.Parent = root
+        
         local bodyVelocity = Instance.new("BodyVelocity")
         bodyVelocity.Velocity = Vector3.new(0, 0, 0)
         bodyVelocity.MaxForce = Vector3.new(40000, 40000, 40000)
-        bodyVelocity.Parent = character:FindFirstChild("HumanoidRootPart")
+        bodyVelocity.Parent = root
         
-        -- Управление полётом
-        local flyConnection
         flyConnection = RunService.Heartbeat:Connect(function()
-            if not flying or not character then
+            if not flying or not character or not root then
                 if flyConnection then flyConnection:Disconnect() end
                 return
             end
             
-            local root = character:FindFirstChild("HumanoidRootPart")
-            if not root then return end
-            
-            local camera = workspace.CurrentCamera
             local direction = Vector3.new()
+            local camCF = workspace.CurrentCamera.CFrame
             
             -- Управление WASD
             if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                direction = direction + camera.CFrame.LookVector
+                direction = direction + camCF.LookVector
             end
             if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                direction = direction - camera.CFrame.LookVector
+                direction = direction - camCF.LookVector
             end
             if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                direction = direction - camera.CFrame.RightVector
+                direction = direction - camCF.RightVector
             end
             if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                direction = direction + camera.CFrame.RightVector
+                direction = direction + camCF.RightVector
             end
             
             -- Управление высотой
@@ -336,28 +340,34 @@ local function toggleFly(state)
                 direction = direction - Vector3.new(0, 1, 0)
             end
             
-            -- Применяем скорость
+            -- Применяем движение
             if direction.Magnitude > 0 then
                 direction = direction.Unit * flySpeed
             end
             
-            local bodyVelocity = root:FindFirstChildOfClass("BodyVelocity")
+            -- Обновляем velocity и gyro
             if bodyVelocity then
                 bodyVelocity.Velocity = direction
             end
+            if bodyGyro then
+                bodyGyro.CFrame = camCF
+            end
         end)
+        
     else
         -- Выключаем полёт
-        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if flyConnection then
+            flyConnection:Disconnect()
+        end
+        
         if humanoid then
             humanoid.PlatformStand = false
         end
         
-        local root = character:FindFirstChild("HumanoidRootPart")
         if root then
-            for _, v in pairs(root:GetChildren()) do
-                if v:IsA("BodyVelocity") then
-                    v:Destroy()
+            for _, obj in pairs(root:GetChildren()) do
+                if obj:IsA("BodyVelocity") or obj:IsA("BodyGyro") then
+                    obj:Destroy()
                 end
             end
         end
@@ -546,9 +556,9 @@ killAuraButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Перетаскивание кнопки открытия
+-- ПЕРЕТАСКИВАНИЕ КНОПКИ ОТКРЫТИЯ
 local openButtonDragging = false
-local openButtonDragStart, openButtonStartPos
+local openButtonDragInput, openButtonDragStart, openButtonStartPos
 
 openButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
@@ -577,11 +587,11 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Перетаскивание меню
+-- ПЕРЕТАСКИВАНИЕ МЕНЮ (за заголовок)
 local menuDragging = false
-local menuDragStart, menuStartPos
+local menuDragInput, menuDragStart, menuStartPos
 
-mainFrame.InputBegan:Connect(function(input)
+titleFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
         menuDragging = true
         menuDragStart = input.Position
@@ -595,7 +605,7 @@ mainFrame.InputBegan:Connect(function(input)
     end
 end)
 
-mainFrame.InputChanged:Connect(function(input)
+titleFrame.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement then
         menuDragInput = input
     end
