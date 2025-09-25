@@ -16,6 +16,7 @@ local noclip = false
 local speedHack = 16
 local killAura = false
 local killAuraRadius = 20
+local infiniteJump = false
 
 -- Целевые NPC для Kill Aura
 local killAuraTargets = {"Alien", "Alpha Wolf", "Wolf", "Crossbow Cultist", "Cultist", "Bear", "Polar Bear"}
@@ -25,16 +26,42 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "TurboModsHackMenu"
 screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Главный фрейм
+-- Кнопка открытия меню (изначально видима)
+local openButton = Instance.new("TextButton")
+openButton.Size = UDim2.new(0, 50, 0, 50)
+openButton.Position = UDim2.new(0, 20, 0.5, -25)
+openButton.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+openButton.BorderSizePixel = 0
+openButton.Text = "🎮"
+openButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+openButton.TextSize = 20
+openButton.ZIndex = 2
+openButton.Parent = screenGui
+
+-- Тень кнопки
+local openButtonShadow = Instance.new("ImageLabel")
+openButtonShadow.Size = UDim2.new(1, 10, 1, 10)
+openButtonShadow.Position = UDim2.new(0, -5, 0, -5)
+openButtonShadow.BackgroundTransparency = 1
+openButtonShadow.Image = "rbxassetid://5554236805"
+openButtonShadow.ImageColor3 = Color3.fromRGB(0, 0, 0)
+openButtonShadow.ImageTransparency = 0.8
+openButtonShadow.ScaleType = Enum.ScaleType.Slice
+openButtonShadow.SliceCenter = Rect.new(10, 10, 118, 118)
+openButtonShadow.ZIndex = 1
+openButtonShadow.Parent = openButton
+
+-- Главный фрейм (изначально скрыт)
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 280, 0, 350)
+mainFrame.Size = UDim2.new(0, 280, 0, 380)
 mainFrame.Position = UDim2.new(0.02, 0, 0.1, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
 mainFrame.BorderSizePixel = 0
 mainFrame.BackgroundTransparency = 0.1
+mainFrame.Visible = false
 mainFrame.Parent = screenGui
 
--- Тень
+-- Тень меню
 local shadow = Instance.new("ImageLabel")
 shadow.Size = UDim2.new(1, 10, 1, 10)
 shadow.Position = UDim2.new(0, -5, 0, -5)
@@ -218,7 +245,7 @@ function CreateSlider(text, min, max, current, callback)
     return {Update = updateValue}
 end
 
--- Кнопка закрытия
+-- Кнопка закрытия меню
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 25, 0, 25)
 closeButton.Position = UDim2.new(1, -30, 0, 5)
@@ -230,9 +257,19 @@ closeButton.TextSize = 16
 closeButton.Font = Enum.Font.GothamBold
 closeButton.Parent = mainFrame
 
-closeButton.MouseButton1Click:Connect(function()
-    screenGui:Destroy()
-end)
+-- Функции открытия/закрытия меню
+local function openMenu()
+    mainFrame.Visible = true
+    openButton.Visible = false
+end
+
+local function closeMenu()
+    mainFrame.Visible = false
+    openButton.Visible = true
+end
+
+closeButton.MouseButton1Click:Connect(closeMenu)
+openButton.MouseButton1Click:Connect(openMenu)
 
 -- Функции модов
 -- Speed Hack
@@ -244,45 +281,40 @@ local function setSpeed(value)
     end
 end
 
--- Fly System
-local flyConnection
+-- Fly System (как в админ команде)
 local function toggleFly(state)
     flying = state
     local character = LocalPlayer.Character
     if not character then return end
     
-    local hrp = character:FindFirstChild("HumanoidRootPart")
-    if not hrp then return end
-    
     if flying then
-        -- Удаляем старые силы
-        for _, v in pairs(hrp:GetChildren()) do
-            if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then
-                v:Destroy()
-            end
+        -- Включаем полёт
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.PlatformStand = true
         end
         
+        -- Создаем BodyVelocity для управления полётом
         local bodyVelocity = Instance.new("BodyVelocity")
-        local bodyGyro = Instance.new("BodyGyro")
-        
         bodyVelocity.Velocity = Vector3.new(0, 0, 0)
         bodyVelocity.MaxForce = Vector3.new(40000, 40000, 40000)
-        bodyVelocity.Parent = hrp
+        bodyVelocity.Parent = character:FindFirstChild("HumanoidRootPart")
         
-        bodyGyro.P = 10000
-        bodyGyro.MaxTorque = Vector3.new(40000, 40000, 40000)
-        bodyGyro.CFrame = hrp.CFrame
-        bodyGyro.Parent = hrp
-        
+        -- Управление полётом
+        local flyConnection
         flyConnection = RunService.Heartbeat:Connect(function()
-            if not flying or not character or not hrp then
+            if not flying or not character then
                 if flyConnection then flyConnection:Disconnect() end
                 return
             end
             
+            local root = character:FindFirstChild("HumanoidRootPart")
+            if not root then return end
+            
             local camera = workspace.CurrentCamera
             local direction = Vector3.new()
             
+            -- Управление WASD
             if UserInputService:IsKeyDown(Enum.KeyCode.W) then
                 direction = direction + camera.CFrame.LookVector
             end
@@ -295,6 +327,8 @@ local function toggleFly(state)
             if UserInputService:IsKeyDown(Enum.KeyCode.D) then
                 direction = direction + camera.CFrame.RightVector
             end
+            
+            -- Управление высотой
             if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
                 direction = direction + Vector3.new(0, 1, 0)
             end
@@ -302,16 +336,29 @@ local function toggleFly(state)
                 direction = direction - Vector3.new(0, 1, 0)
             end
             
-            bodyVelocity.Velocity = direction.Unit * flySpeed
-            bodyGyro.CFrame = camera.CFrame
+            -- Применяем скорость
+            if direction.Magnitude > 0 then
+                direction = direction.Unit * flySpeed
+            end
+            
+            local bodyVelocity = root:FindFirstChildOfClass("BodyVelocity")
+            if bodyVelocity then
+                bodyVelocity.Velocity = direction
+            end
         end)
     else
-        if flyConnection then
-            flyConnection:Disconnect()
+        -- Выключаем полёт
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.PlatformStand = false
         end
-        for _, v in pairs(hrp:GetChildren()) do
-            if v:IsA("BodyVelocity") or v:IsA("BodyGyro") then
-                v:Destroy()
+        
+        local root = character:FindFirstChild("HumanoidRootPart")
+        if root then
+            for _, v in pairs(root:GetChildren()) do
+                if v:IsA("BodyVelocity") then
+                    v:Destroy()
+                end
             end
         end
     end
@@ -344,6 +391,27 @@ local function toggleNoclip(state)
             if part:IsA("BasePart") then
                 part.CanCollide = true
             end
+        end
+    end
+end
+
+-- Infinite Jump
+local infiniteJumpConnection
+local function toggleInfiniteJump(state)
+    infiniteJump = state
+    
+    if infiniteJump then
+        infiniteJumpConnection = UserInputService.JumpRequest:Connect(function()
+            if infiniteJump and LocalPlayer.Character then
+                local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                if humanoid then
+                    humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
+                end
+            end
+        end)
+    else
+        if infiniteJumpConnection then
+            infiniteJumpConnection:Disconnect()
         end
     end
 end
@@ -391,10 +459,17 @@ local function toggleKillAura(state)
     end
 end
 
+-- Функция для клика
+function mouse1click()
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, true, game, 0)
+    VirtualInputManager:SendMouseButtonEvent(0, 0, 0, false, game, 0)
+end
+
 -- Создание элементов меню
 local speedButton, speedIndicator, speedText = CreateButton("Speed Hack", true)
 local flyButton, flyIndicator, flyText = CreateButton("Fly", true)
 local noclipButton, noclipIndicator, noclipText = CreateButton("Noclip", true)
+local infiniteJumpButton, infiniteJumpIndicator, infiniteJumpText = CreateButton("Infinite Jump", true)
 local killAuraButton, killAuraIndicator, killAuraText = CreateButton("Kill Aura", true)
 
 local flySpeedSlider = CreateSlider("Fly Speed", 10, 200, flySpeed, function(value)
@@ -449,6 +524,17 @@ noclipButton.MouseButton1Click:Connect(function()
     end
 end)
 
+infiniteJumpButton.MouseButton1Click:Connect(function()
+    toggleInfiniteJump(not infiniteJump)
+    if infiniteJump then
+        infiniteJumpIndicator.BackgroundColor3 = Color3.fromRGB(0, 255, 127)
+        infiniteJumpText.Text = "Infinite Jump ✅"
+    else
+        infiniteJumpIndicator.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+        infiniteJumpText.Text = "Infinite Jump ❌"
+    end
+end)
+
 killAuraButton.MouseButton1Click:Connect(function()
     toggleKillAura(not killAura)
     if killAura then
@@ -460,19 +546,50 @@ killAuraButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Перетаскивание окна
-local dragging = false
-local dragInput, dragStart, startPos
+-- Перетаскивание кнопки открытия
+local openButtonDragging = false
+local openButtonDragStart, openButtonStartPos
 
-mainFrame.InputBegan:Connect(function(input)
+openButton.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = mainFrame.Position
+        openButtonDragging = true
+        openButtonDragStart = input.Position
+        openButtonStartPos = openButton.Position
         
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
+                openButtonDragging = false
+            end
+        end)
+    end
+end)
+
+openButton.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        openButtonDragInput = input
+    end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if openButtonDragging and input == openButtonDragInput then
+        local delta = input.Position - openButtonDragStart
+        openButton.Position = openButtonStartPos + UDim2.new(0, delta.X, 0, delta.Y)
+    end
+end)
+
+-- Перетаскивание меню
+local menuDragging = false
+local menuDragStart, menuStartPos
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        menuDragging = true
+        menuDragStart = input.Position
+        menuStartPos = mainFrame.Position
+        
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                menuDragging = false
             end
         end)
     end
@@ -480,14 +597,14 @@ end)
 
 mainFrame.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
+        menuDragInput = input
     end
 end)
 
 UserInputService.InputChanged:Connect(function(input)
-    if dragging and input == dragInput then
-        local delta = input.Position - dragStart
-        mainFrame.Position = startPos + UDim2.new(0, delta.X, 0, delta.Y)
+    if menuDragging and input == menuDragInput then
+        local delta = input.Position - menuDragStart
+        mainFrame.Position = menuStartPos + UDim2.new(0, delta.X, 0, delta.Y)
     end
 end)
 
@@ -500,11 +617,16 @@ end)
 UserInputService.InputBegan:Connect(function(input, gameProcessed)
     if gameProcessed then return end
     if input.KeyCode == Enum.KeyCode.F5 then
-        mainFrame.Visible = not mainFrame.Visible
+        if mainFrame.Visible then
+            closeMenu()
+        else
+            openMenu()
+        end
     end
 end)
 
 print("🎮 TurboModsHack Menu загружен!")
-print("👤 Игрок: " .. LocalPlayer.Name)
-print("💻 Создатель: TG @TurboModsHack")
-print("🎯 Горячая клавиша: F5 - скрыть/показать меню")
+print("👤 Player: " .. LocalPlayer.Name)
+print("💻 Creator: TG @TurboModsHack")
+print("🎯 Hotkey: F5 - toggle menu")
+print("🚀 Features: Speed, Fly, Noclip, Infinite Jump, Kill Aura")
