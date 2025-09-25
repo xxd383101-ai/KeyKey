@@ -7,15 +7,17 @@ local LocalPlayer = Players.LocalPlayer
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
+local TeleportService = game:GetService("TeleportService")
+local HttpService = game:GetService("HttpService")
 
 -- Создание окна
 local Window = Rayfield:CreateWindow({
-   Name = "🔥 Script all game || 99 nights in the forest  ",
-   LoadingTitle = "Ultimate Script Loading...",
+   Name = "🔥 Universal Script Menu",
+   LoadingTitle = "Universal Script Loading...",
    LoadingSubtitle = "by TurboModder t.me/TurboHackMods",
    ConfigurationSaving = {
       Enabled = true,
-      FolderName = "UltimateScriptConfig",
+      FolderName = "UniversalScriptConfig",
       FileName = "Settings"
    },
    Discord = {
@@ -31,14 +33,14 @@ local MainTab = Window:CreateTab("Main", 4483362458)
 -- Раздел Movement
 local MovementSection = MainTab:CreateSection("Movement Features")
 
--- НОВЫЙ РАБОЧИЙ FLY SYSTEM
+-- Fly Function
 local flying = false
 local flySpeed = 50
 local flyConnection
 local bodyGyro, bodyVelocity
 
 local FlyToggle = MainTab:CreateToggle({
-    Name = "🕊️ Fly (NEW WORKING)",
+    Name = "🕊️ Fly",
     CurrentValue = false,
     Flag = "FlyToggle",
     Callback = function(Value)
@@ -58,35 +60,28 @@ local FlyToggle = MainTab:CreateToggle({
                 return
             end
             
-            -- Отключаем гравитацию
             humanoid.PlatformStand = true
             
-            -- Создаем контролы для полета
             bodyGyro = Instance.new("BodyGyro")
             bodyVelocity = Instance.new("BodyVelocity")
             
-            -- Настраиваем BodyGyro для стабилизации
             bodyGyro.P = 10000
             bodyGyro.MaxTorque = Vector3.new(100000, 100000, 100000)
             bodyGyro.CFrame = rootPart.CFrame
             bodyGyro.Parent = rootPart
             
-            -- Настраиваем BodyVelocity для движения
             bodyVelocity.Velocity = Vector3.new(0, 0, 0)
             bodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
             bodyVelocity.Parent = rootPart
             
-            -- Подключаем управление полетом
             flyConnection = RunService.Heartbeat:Connect(function()
                 if not flying or not bodyGyro or not bodyVelocity then return end
                 
                 local camera = workspace.CurrentCamera
                 local direction = Vector3.new()
                 
-                -- Обновляем поворот камеры
                 bodyGyro.CFrame = camera.CFrame
                 
-                -- Управление WASD
                 if UserInputService:IsKeyDown(Enum.KeyCode.W) then
                     direction = direction + camera.CFrame.LookVector
                 end
@@ -99,16 +94,13 @@ local FlyToggle = MainTab:CreateToggle({
                 if UserInputService:IsKeyDown(Enum.KeyCode.A) then
                     direction = direction - camera.CFrame.RightVector
                 end
-                
-                -- Вверх/вниз
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
                     direction = direction + Vector3.new(0, 1, 0)
                 end
-                if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
                     direction = direction - Vector3.new(0, 1, 0)
                 end
                 
-                -- Применяем скорость
                 if direction.Magnitude > 0 then
                     bodyVelocity.Velocity = direction.Unit * flySpeed
                 else
@@ -123,28 +115,10 @@ local FlyToggle = MainTab:CreateToggle({
             })
             
         else
-            -- Выключаем полет
-            if bodyGyro then
-                bodyGyro:Destroy()
-                bodyGyro = nil
-            end
-            if bodyVelocity then
-                bodyVelocity:Destroy()
-                bodyVelocity = nil
-            end
-            if flyConnection then
-                flyConnection:Disconnect()
-                flyConnection = nil
-            end
-            if humanoid then
-                humanoid.PlatformStand = false
-            end
-            
-            Rayfield:Notify({
-                Title = "Fly Deactivated",
-                Content = "Flight mode turned off",
-                Duration = 2,
-            })
+            if bodyGyro then bodyGyro:Destroy() end
+            if bodyVelocity then bodyVelocity:Destroy() end
+            if flyConnection then flyConnection:Disconnect() end
+            if humanoid then humanoid.PlatformStand = false end
         end
     end,
 })
@@ -190,9 +164,7 @@ local NoclipToggle = MainTab:CreateToggle({
                 end
             end)
         else
-            if noclipConnection then
-                noclipConnection:Disconnect()
-            end
+            if noclipConnection then noclipConnection:Disconnect() end
             if LocalPlayer.Character then
                 for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                     if part:IsA("BasePart") then
@@ -280,14 +252,130 @@ local KillAllButton = MainTab:CreateButton({
     end,
 })
 
--- Вкладка Visuals
-local VisualsTab = Window:CreateTab("Visuals", 4483345990)
+-- Вкладка Teleport
+local TeleportTab = Window:CreateTab("Teleport", 4483353530)
+
+-- Teleport to Player
+local playerDropdown = TeleportTab:CreateDropdown({
+    Name = "👤 Teleport to Player",
+    Options = {"Select Player"},
+    CurrentOption = "Select Player",
+    Flag = "PlayerDropdown",
+    Callback = function(Option)
+        if Option ~= "Select Player" then
+            local targetPlayer = Players:FindFirstChild(Option)
+            if targetPlayer and targetPlayer.Character then
+                local rootPart = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                
+                if rootPart and localRoot then
+                    localRoot.CFrame = rootPart.CFrame
+                    Rayfield:Notify({
+                        Title = "Teleported!",
+                        Content = "Teleported to " .. Option,
+                        Duration = 3,
+                    })
+                end
+            end
+        end
+    end,
+})
+
+-- Update player list function
+local function updatePlayerList()
+    local playerNames = {"Select Player"}
+    for _, player in pairs(Players:GetPlayers()) do
+        if player ~= LocalPlayer then
+            table.insert(playerNames, player.Name)
+        end
+    end
+    playerDropdown:Refresh(playerNames, true)
+end
+
+-- Initial update and connections
+updatePlayerList()
+Players.PlayerAdded:Connect(updatePlayerList)
+Players.PlayerRemoving:Connect(updatePlayerList)
+
+-- Bring Player to You
+local BringButton = TeleportTab:CreateButton({
+    Name = "📥 Bring Player to You",
+    Callback = function()
+        local selectedPlayer = playerDropdown.CurrentOption
+        if selectedPlayer ~= "Select Player" then
+            local targetPlayer = Players:FindFirstChild(selectedPlayer)
+            local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+            
+            if targetPlayer and targetPlayer.Character and localRoot then
+                local targetRoot = targetPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if targetRoot then
+                    targetRoot.CFrame = localRoot.CFrame
+                    Rayfield:Notify({
+                        Title = "Player Brought!",
+                        Content = "Brought " .. selectedPlayer .. " to you",
+                        Duration = 3,
+                    })
+                end
+            end
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Select a player first!",
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+-- Teleport to Coordinate
+local XInput = TeleportTab:CreateInput({
+    Name = "X Coordinate",
+    PlaceholderText = "0",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text) end,
+})
+
+local YInput = TeleportTab:CreateInput({
+    Name = "Y Coordinate",
+    PlaceholderText = "0",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text) end,
+})
+
+local ZInput = TeleportTab:CreateInput({
+    Name = "Z Coordinate",
+    PlaceholderText = "0",
+    RemoveTextAfterFocusLost = false,
+    Callback = function(Text) end,
+})
+
+local TeleportCoordButton = TeleportTab:CreateButton({
+    Name = "📍 Teleport to Coordinates",
+    Callback = function()
+        local x = tonumber(XInput.Value) or 0
+        local y = tonumber(YInput.Value) or 0
+        local z = tonumber(ZInput.Value) or 0
+        
+        local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if localRoot then
+            localRoot.CFrame = CFrame.new(x, y, z)
+            Rayfield:Notify({
+                Title = "Teleported!",
+                Content = string.format("Teleported to (%d, %d, %d)", x, y, z),
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+-- Вкладка Player
+local PlayerTab = Window:CreateTab("Player", 4483345990)
 
 -- ESP Function
 local espEnabled = false
 local espObjects = {}
 
-local ESPToggle = VisualsTab:CreateToggle({
+local ESPToggle = PlayerTab:CreateToggle({
     Name = "👁️ Player ESP",
     CurrentValue = false,
     Flag = "ESP",
@@ -309,9 +397,7 @@ local ESPToggle = VisualsTab:CreateToggle({
             end)
         else
             for _, obj in pairs(espObjects) do
-                if obj then
-                    obj:Remove()
-                end
+                if obj then obj:Remove() end
             end
             espObjects = {}
         end
@@ -328,8 +414,97 @@ function createESP(character, name)
     table.insert(espObjects, highlight)
 end
 
+-- View Player
+local ViewButton = PlayerTab:CreateButton({
+    Name = "👀 View Player",
+    Callback = function()
+        local selectedPlayer = playerDropdown.CurrentOption
+        if selectedPlayer ~= "Select Player" then
+            local targetPlayer = Players:FindFirstChild(selectedPlayer)
+            if targetPlayer then
+                workspace.CurrentCamera.CameraSubject = targetPlayer.Character and targetPlayer.Character:FindFirstChild("Humanoid")
+                Rayfield:Notify({
+                    Title = "Viewing Player",
+                    Content = "Now viewing " .. selectedPlayer,
+                    Duration = 3,
+                })
+            end
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Select a player first!",
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+-- Reset View
+local ResetViewButton = PlayerTab:CreateButton({
+    Name = "🔁 Reset View",
+    Callback = function()
+        workspace.CurrentCamera.CameraSubject = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid")
+        Rayfield:Notify({
+            Title = "View Reset",
+            Content = "Camera view reset to yourself",
+            Duration = 3,
+        })
+    end,
+})
+
+-- Freeze Player
+local FreezeButton = PlayerTab:CreateButton({
+    Name = "❄️ Freeze Player",
+    Callback = function()
+        local selectedPlayer = playerDropdown.CurrentOption
+        if selectedPlayer ~= "Select Player" then
+            local targetPlayer = Players:FindFirstChild(selectedPlayer)
+            if targetPlayer and targetPlayer.Character then
+                local humanoid = targetPlayer.Character:FindFirstChild("Humanoid")
+                if humanoid then
+                    humanoid.PlatformStand = true
+                    Rayfield:Notify({
+                        Title = "Player Frozen",
+                        Content = "Frozen " .. selectedPlayer,
+                        Duration = 3,
+                    })
+                end
+            end
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Select a player first!",
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+-- Unfreeze All Players
+local UnfreezeButton = PlayerTab:CreateButton({
+    Name = "🔥 Unfreeze All Players",
+    Callback = function()
+        for _, player in pairs(Players:GetPlayers()) do
+            if player.Character then
+                local humanoid = player.Character:FindFirstChild("Humanoid")
+                if humanoid then
+                    humanoid.PlatformStand = false
+                end
+            end
+        end
+        Rayfield:Notify({
+            Title = "Players Unfrozen",
+            Content = "All players unfrozen",
+            Duration = 3,
+        })
+    end,
+})
+
+-- Вкладка World
+local WorldTab = Window:CreateTab("World", 4483344167)
+
 -- Fullbright
-local FullbrightToggle = VisualsTab:CreateToggle({
+local FullbrightToggle = WorldTab:CreateToggle({
     Name = "💡 Fullbright",
     CurrentValue = false,
     Flag = "Fullbright",
@@ -346,77 +521,40 @@ local FullbrightToggle = VisualsTab:CreateToggle({
     end,
 })
 
--- X-Ray Vision
-local XRayToggle = VisualsTab:CreateToggle({
-    Name = "🔍 X-Ray Vision",
-    CurrentValue = false,
-    Flag = "XRay",
+-- Time of Day
+local TimeSlider = WorldTab:CreateSlider({
+    Name = "⏰ Time of Day",
+    Range = {0, 24},
+    Increment = 0.5,
+    Suffix = " hours",
+    CurrentValue = 12,
+    Flag = "TimeOfDay",
     Callback = function(Value)
-        if LocalPlayer.Character then
-            local humanoid = LocalPlayer.Character:FindFirstChild("Humanoid")
-            if humanoid then
-                humanoid.CameraOffset = Value and Vector3.new(0, 0, -10) or Vector3.new(0, 0, 0)
-            end
-        end
+        Lighting.ClockTime = Value
     end,
 })
 
--- Вкладка Teleport
-local TeleportTab = Window:CreateTab("Teleport", 4483353530)
-
--- Teleport to Player
-local playerDropdown = TeleportTab:CreateDropdown({
-    Name = "👤 Teleport to Player",
-    Options = {"Select Player"},
-    CurrentOption = "Select Player",
-    Flag = "PlayerDropdown",
-    Callback = function(Option)
-        if Option ~= "Select Player" then
-            local targetPlayer = Players[Option]
-            if targetPlayer and targetPlayer.Character and targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                LocalPlayer.Character:MoveTo(targetPlayer.Character.HumanoidRootPart.Position)
+-- FPS Boost
+local FPSBoostButton = WorldTab:CreateButton({
+    Name = "⚡ FPS Boost",
+    Callback = function()
+        settings().Rendering.QualityLevel = 1
+        for _, desc in pairs(workspace:GetDescendants()) do
+            if desc:IsA("Part") then
+                desc.Material = Enum.Material.Plastic
             end
         end
+        
+        Rayfield:Notify({
+            Title = "FPS Boost Applied",
+            Content = "Graphics optimized for better performance",
+            Duration = 3,
+        })
     end,
 })
-
--- Update player list
-local function updatePlayerList()
-    local playerNames = {"Select Player"}
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer then
-            table.insert(playerNames, player.Name)
-        end
-    end
-    playerDropdown:Refresh(playerNames, true)
-end
-
-updatePlayerList()
-Players.PlayerAdded:Connect(updatePlayerList)
-Players.PlayerRemoving:Connect(updatePlayerList)
-
--- Teleport to Locations
-local TeleportSection = TeleportTab:CreateSection("Location Teleport")
-
-local locations = {
-    {"Spawn Point", Vector3.new(0, 10, 0)},
-    {"High Point", Vector3.new(0, 100, 0)},
-    {"Far Point", Vector3.new(100, 10, 100)}
-}
-
-for i, location in ipairs(locations) do
-    TeleportTab:CreateButton({
-        Name = "📍 Teleport to " .. location[1],
-        Callback = function()
-            if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(location[2])
-            end
-        end,
-    })
-end
 
 -- Вкладка Misc
-local MiscTab = Window:CreateTab("Miscellaneous", 4483344167)
+local MiscTab = Window:CreateTab("Miscellaneous", 4483350926)
 
 -- Anti AFK
 local AntiAfkToggle = MiscTab:CreateToggle({
@@ -444,38 +582,66 @@ local ServerHopButton = MiscTab:CreateButton({
             Duration = 3,
         })
         
-        -- Simple server hop implementation
         local servers = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"))
         for _, server in pairs(servers.data) do
             if server.playing < server.maxPlayers and server.id ~= game.JobId then
-                game:GetService("TeleportService"):TeleportToPlaceInstance(game.PlaceId, server.id)
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id)
                 break
             end
         end
     end,
 })
 
--- FPS Boost
-local FPSBoostButton = MiscTab:CreateButton({
-    Name = "⚡ FPS Boost",
+-- Rejoin Server
+local RejoinButton = MiscTab:CreateButton({
+    Name = "🔃 Rejoin Server",
     Callback = function()
-        -- Graphics optimization
-        settings().Rendering.QualityLevel = 1
-        for _, desc in pairs(workspace:GetDescendants()) do
-            if desc:IsA("Part") then
-                desc.Material = Enum.Material.Plastic
-            end
-        end
-        
-        Rayfield:Notify({
-            Title = "FPS Boost Applied",
-            Content = "Graphics optimized for better performance",
-            Duration = 3,
-        })
+        TeleportService:TeleportToPlaceInstance(game.PlaceId, game.JobId)
     end,
 })
 
--- Автоматическая очистка при выходе из игры
+-- Fly Controls
+local flyConnection
+flyConnection = RunService.Heartbeat:Connect(function()
+    if flying and bodyGyro and bodyVelocity and LocalPlayer.Character then
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if root then
+            local camera = workspace.CurrentCamera
+            local direction = Vector3.new()
+            
+            if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                direction = direction + camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                direction = direction - camera.CFrame.LookVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                direction = direction + camera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                direction = direction - camera.CFrame.RightVector
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                direction = direction + Vector3.new(0, 1, 0)
+            end
+            if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
+                direction = direction - Vector3.new(0, 1, 0)
+            end
+            
+            bodyVelocity.Velocity = direction.Unit * flySpeed
+        end
+    end
+end)
+
+-- Уведомление о загрузке
+Rayfield:Notify({
+    Title = "Universal Script Loaded! 🚀",
+    Content = "All features are now available!",
+    Duration = 6,
+    Image = 4483362458,
+})
+
+-- Очистка при отключении
 game:GetService("UserInputService").WindowFocusReleased:Connect(function()
     if flying then
         flying = false
@@ -484,11 +650,3 @@ game:GetService("UserInputService").WindowFocusReleased:Connect(function()
         if flyConnection then flyConnection:Disconnect() end
     end
 end)
-
--- Уведомление о загрузке
-Rayfield:Notify({
-    Title = "Ultimate Script Loaded! 🚀",
-    Content = "New Fly system activated! Use WASD + Space/Ctrl",
-    Duration = 6,
-    Image = 4483362458,
-})
