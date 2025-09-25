@@ -1,4 +1,4 @@
--- Rayfield Interface Suite
+-- By Modder t.me/TurboHackMods & TurboModder
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 -- Переменные для функций
@@ -10,9 +10,9 @@ local Lighting = game:GetService("Lighting")
 
 -- Создание окна
 local Window = Rayfield:CreateWindow({
-   Name = "🔥 Ultimate Script Menu v2.0",
+   Name = "🔥 Script all game || 99 nights in the forest  ",
    LoadingTitle = "Ultimate Script Loading...",
-   LoadingSubtitle = "by Developer",
+   LoadingSubtitle = "by TurboModder t.me/TurboHackMods",
    ConfigurationSaving = {
       Enabled = true,
       FolderName = "UltimateScriptConfig",
@@ -31,36 +31,120 @@ local MainTab = Window:CreateTab("Main", 4483362458)
 -- Раздел Movement
 local MovementSection = MainTab:CreateSection("Movement Features")
 
--- Fly Function
+-- НОВЫЙ РАБОЧИЙ FLY SYSTEM
 local flying = false
 local flySpeed = 50
-local bodyVelocity
+local flyConnection
+local bodyGyro, bodyVelocity
 
 local FlyToggle = MainTab:CreateToggle({
-    Name = "🕊️ Fly",
+    Name = "🕊️ Fly (NEW WORKING)",
     CurrentValue = false,
     Flag = "FlyToggle",
     Callback = function(Value)
         flying = Value
+        local character = LocalPlayer.Character
+        local humanoid = character and character:FindFirstChild("Humanoid")
+        local rootPart = character and character:FindFirstChild("HumanoidRootPart")
+        
         if flying then
-            local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-            if root then
-                bodyVelocity = Instance.new("BodyVelocity")
-                bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-                bodyVelocity.MaxForce = Vector3.new(0, 0, 0)
-                bodyVelocity.Parent = root
-                
+            if not rootPart or not humanoid then
                 Rayfield:Notify({
-                    Title = "Fly Activated",
-                    Content = "Use W/A/S/D to fly. Space to go up, Ctrl to go down",
+                    Title = "Fly Error",
+                    Content = "Character not found!",
                     Duration = 3,
                 })
+                flying = false
+                return
             end
+            
+            -- Отключаем гравитацию
+            humanoid.PlatformStand = true
+            
+            -- Создаем контролы для полета
+            bodyGyro = Instance.new("BodyGyro")
+            bodyVelocity = Instance.new("BodyVelocity")
+            
+            -- Настраиваем BodyGyro для стабилизации
+            bodyGyro.P = 10000
+            bodyGyro.MaxTorque = Vector3.new(100000, 100000, 100000)
+            bodyGyro.CFrame = rootPart.CFrame
+            bodyGyro.Parent = rootPart
+            
+            -- Настраиваем BodyVelocity для движения
+            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+            bodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
+            bodyVelocity.Parent = rootPart
+            
+            -- Подключаем управление полетом
+            flyConnection = RunService.Heartbeat:Connect(function()
+                if not flying or not bodyGyro or not bodyVelocity then return end
+                
+                local camera = workspace.CurrentCamera
+                local direction = Vector3.new()
+                
+                -- Обновляем поворот камеры
+                bodyGyro.CFrame = camera.CFrame
+                
+                -- Управление WASD
+                if UserInputService:IsKeyDown(Enum.KeyCode.W) then
+                    direction = direction + camera.CFrame.LookVector
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.S) then
+                    direction = direction - camera.CFrame.LookVector
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.D) then
+                    direction = direction + camera.CFrame.RightVector
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.A) then
+                    direction = direction - camera.CFrame.RightVector
+                end
+                
+                -- Вверх/вниз
+                if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
+                    direction = direction + Vector3.new(0, 1, 0)
+                end
+                if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) or UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
+                    direction = direction - Vector3.new(0, 1, 0)
+                end
+                
+                -- Применяем скорость
+                if direction.Magnitude > 0 then
+                    bodyVelocity.Velocity = direction.Unit * flySpeed
+                else
+                    bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                end
+            end)
+            
+            Rayfield:Notify({
+                Title = "Fly Activated ✅",
+                Content = "WASD: Move | Space: Up | Ctrl: Down",
+                Duration = 4,
+            })
+            
         else
+            -- Выключаем полет
+            if bodyGyro then
+                bodyGyro:Destroy()
+                bodyGyro = nil
+            end
             if bodyVelocity then
                 bodyVelocity:Destroy()
                 bodyVelocity = nil
             end
+            if flyConnection then
+                flyConnection:Disconnect()
+                flyConnection = nil
+            end
+            if humanoid then
+                humanoid.PlatformStand = false
+            end
+            
+            Rayfield:Notify({
+                Title = "Fly Deactivated",
+                Content = "Flight mode turned off",
+                Duration = 2,
+            })
         end
     end,
 })
@@ -121,9 +205,6 @@ local NoclipToggle = MainTab:CreateToggle({
 })
 
 -- Speed Hack
-local speedHack = false
-local originalWalkSpeed = 16
-
 local SpeedHackSlider = MainTab:CreateSlider({
     Name = "💨 Speed Hack",
     Range = {1, 100},
@@ -140,7 +221,6 @@ local SpeedHackSlider = MainTab:CreateSlider({
 
 -- Infinite Jump
 local infiniteJump = false
-local originalJumpPower
 
 local InfiniteJumpToggle = MainTab:CreateToggle({
     Name = "∞ Infinite Jump",
@@ -395,58 +475,20 @@ local FPSBoostButton = MiscTab:CreateButton({
     end,
 })
 
--- Fly Controls
-local flyConnection
-flyConnection = RunService.Heartbeat:Connect(function()
-    if flying and bodyVelocity and LocalPlayer.Character then
-        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if root then
-            local camera = workspace.CurrentCamera
-            local direction = Vector3.new()
-            
-            if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                direction = direction + camera.CFrame.LookVector
-            end
-            if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                direction = direction - camera.CFrame.LookVector
-            end
-            if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                direction = direction + camera.CFrame.RightVector
-            end
-            if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                direction = direction - camera.CFrame.RightVector
-            end
-            if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                direction = direction + Vector3.new(0, 1, 0)
-            end
-            if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
-                direction = direction - Vector3.new(0, 1, 0)
-            end
-            
-            bodyVelocity.Velocity = direction.Unit * flySpeed
-            bodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
-        end
+-- Автоматическая очистка при выходе из игры
+game:GetService("UserInputService").WindowFocusReleased:Connect(function()
+    if flying then
+        flying = false
+        if bodyGyro then bodyGyro:Destroy() end
+        if bodyVelocity then bodyVelocity:Destroy() end
+        if flyConnection then flyConnection:Disconnect() end
     end
 end)
 
 -- Уведомление о загрузке
 Rayfield:Notify({
-    Title = "Ultimate Script Loaded!",
-    Content = "All features are now available. Use with caution!",
+    Title = "Ultimate Script Loaded! 🚀",
+    Content = "New Fly system activated! Use WASD + Space/Ctrl",
     Duration = 6,
     Image = 4483362458,
 })
-
--- Очистка при отключении
-game:GetService("UserInputService").WindowFocused:Connect(function()
-    if not flying and bodyVelocity then
-        bodyVelocity:Destroy()
-        bodyVelocity = nil
-    end
-    if noclipConnection then
-        noclipConnection:Disconnect()
-    end
-    if flyConnection then
-        flyConnection:Disconnect()
-    end
-end)
