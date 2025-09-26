@@ -32,162 +32,683 @@ local Window = Rayfield:CreateWindow({
 local MainTab = Window:CreateTab("Main", 4483362458)
 
 -- Раздел Movement
-local MovementSection = MainTab:CreateSection("Movement Features")
+-- НОВЫЙ ТИП ПОЛЕТА (BodyVelocity)
+local newFlyEnabled = false
+local newFlySpeed = 100
+local newFlyBodyVel = nil
+local newFlyConnection = nil
 
--- НОВЫЙ РАБОЧИЙ FLY
-local flying = false
-local flySpeed = 100
-local flyConnection
-
-local FlyToggle = MainTab:CreateToggle({
-    Name = "🕊️ Fly (FIXED)",
+local NewFlyToggle = MainTab:CreateToggle({
+    Name = "🛸 New Flight Mode",
     CurrentValue = false,
-    Flag = "FlyToggle",
+    Flag = "NewFly",
     Callback = function(Value)
-        flying = Value
-        if flying then
-            local character = LocalPlayer.Character
-            local humanoid = character and character:FindFirstChildOfClass("Humanoid")
-            local rootPart = character and character:FindFirstChild("HumanoidRootPart")
-            
-            if not rootPart or not humanoid then
-                Rayfield:Notify({
-                    Title = "Fly Error",
-                    Content = "Character not found!",
-                    Duration = 3,
-                })
-                flying = false
-                return
-            end
-            
-            humanoid.PlatformStand = true
-            
-            flyConnection = RunService.Heartbeat:Connect(function()
-                if not flying or not character or not rootPart then return end
-                
-                local camera = workspace.CurrentCamera
-                local velocity = Vector3.new(0, 0, 0)
-                
+        newFlyEnabled = Value
+        local character = LocalPlayer.Character
+        if not character then return end
+
+        local rootPart = character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then return end
+
+        if Value then
+            -- Создание BodyVelocity
+            newFlyBodyVel = Instance.new("BodyVelocity")
+            newFlyBodyVel.Velocity = Vector3.zero
+            newFlyBodyVel.MaxForce = Vector3.new(1, 1, 1) * 1e6
+            newFlyBodyVel.P = 1250
+            newFlyBodyVel.Parent = rootPart
+
+            -- Присвоение перемещения
+            newFlyConnection = RunService.Heartbeat:Connect(function()
+                if not newFlyEnabled or not rootPart then return end
+                local moveDir = Vector3.zero
+                local camCF = workspace.CurrentCamera.CFrame
+
                 if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                    velocity = velocity + camera.CFrame.LookVector
+                    moveDir = moveDir + camCF.LookVector
                 end
                 if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                    velocity = velocity - camera.CFrame.LookVector
+                    moveDir = moveDir - camCF.LookVector
                 end
                 if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                    velocity = velocity + camera.CFrame.RightVector
+                    moveDir = moveDir + camCF.RightVector
                 end
                 if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                    velocity = velocity - camera.CFrame.RightVector
+                    moveDir = moveDir - camCF.RightVector
                 end
                 if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                    velocity = velocity + Vector3.new(0, 1, 0)
+                    moveDir = moveDir + Vector3.new(0, 1, 0)
                 end
                 if UserInputService:IsKeyDown(Enum.KeyCode.LeftControl) then
-                    velocity = velocity - Vector3.new(0, 1, 0)
+                    moveDir = moveDir - Vector3.new(0, 1, 0)
                 end
-                
-                if velocity.Magnitude > 0 then
-                    rootPart.Velocity = velocity.Unit * flySpeed
+
+                if moveDir.Magnitude > 0 then
+                    newFlyBodyVel.Velocity = moveDir.Unit * newFlySpeed
                 else
-                    rootPart.Velocity = Vector3.new(0, rootPart.Velocity.Y, 0)
+                    newFlyBodyVel.Velocity = Vector3.zero
                 end
             end)
-            
+
             Rayfield:Notify({
-                Title = "Fly Activated ✅",
-                Content = "WASD + Space/Ctrl - Movement",
+                Title = "New Flight Activated 🛸",
+                Content = "Use WASD + Space/Ctrl to move",
                 Duration = 4,
             })
-            
         else
-            if flyConnection then
-                flyConnection:Disconnect()
-                flyConnection = nil
+            -- Отключение полета
+            if newFlyBodyVel then
+                newFlyBodyVel:Destroy()
+                newFlyBodyVel = nil
             end
-            if LocalPlayer.Character then
-                local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
-                if humanoid then
-                    humanoid.PlatformStand = false
-                end
+            if newFlyConnection then
+                newFlyConnection:Disconnect()
+                newFlyConnection = nil
             end
+            Rayfield:Notify({
+                Title = "New Flight Deactivated",
+                Content = "Flight mode turned off",
+                Duration = 3,
+            })
         end
     end,
 })
 
-local FlySpeedSlider = MainTab:CreateSlider({
-    Name = "🚀 Fly Speed",
+local NewFlySpeedSlider = MainTab:CreateSlider({
+    Name = "⚙️ New Flight Speed",
     Range = {50, 500},
     Increment = 10,
     Suffix = "studs",
     CurrentValue = 100,
-    Flag = "FlySpeed",
+    Flag = "NewFlySpeed",
     Callback = function(Value)
-        flySpeed = Value
+        newFlySpeed = Value
     end,
 })
 
--- WALLHOP SYSTEM
-local wallhopEnabled = false
-local wallhopConnection
+local MovementSection = MainTab:CreateSection("Movement Features")
 
-local WallhopToggle = MainTab:CreateToggle({
-    Name = "🧱 WallHop",
+
+-- 🏎️ Auto Spin (вращает персонажа на месте)
+local SpinToggle = MainTab:CreateToggle({
+    Name = "🏎️ Auto Spin",
     CurrentValue = false,
-    Flag = "WallhopToggle",
+    Flag = "SpinToggle",
     Callback = function(Value)
-        wallhopEnabled = Value
-        if wallhopEnabled then
-            wallhopConnection = UserInputService.JumpRequest:Connect(function()
-                if not wallhopEnabled then return end
-                
-                local character = LocalPlayer.Character
-                if not character then return end
-                
-                local humanoid = character:FindFirstChildOfClass("Humanoid")
-                local rootPart = character:FindFirstChild("HumanoidRootPart")
-                
-                if not humanoid or not rootPart then return end
-                if humanoid:GetState() == Enum.HumanoidStateType.Dead then return end
-                
-                -- Wall detection
-                local raycastParams = RaycastParams.new()
-                raycastParams.FilterType = Enum.RaycastFilterType.Blacklist
-                raycastParams.FilterDescendantsInstances = {character}
-                
-                local detectionDistance = 5
-                local rayOrigin = rootPart.Position
-                local rayDirection = rootPart.CFrame.LookVector * detectionDistance
-                
-                local rayResult = workspace:Raycast(rayOrigin, rayDirection, raycastParams)
-                
-                if rayResult then
-                    local wallNormal = rayResult.Normal
-                    local jumpDirection = (rootPart.CFrame.LookVector - 2 * wallNormal * wallNormal:Dot(rootPart.CFrame.LookVector)).Unit
-                    
-                    rootPart.Velocity = jumpDirection * 100 + Vector3.new(0, 100, 0)
-                    
-                    Rayfield:Notify({
-                        Title = "WallHop!",
-                        Content = "Wall jump performed",
-                        Duration = 1,
-                    })
+        if Value then
+            _G.Spin = true
+            task.spawn(function()
+                while _G.Spin do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        LocalPlayer.Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(30), 0)
+                    end
+                    task.wait(0.05)
                 end
             end)
-            
-            Rayfield:Notify({
-                Title = "WallHop Activated",
-                Content = "Jump near walls to wall jump",
-                Duration = 3,
-            })
         else
-            if wallhopConnection then
-                wallhopConnection:Disconnect()
-                wallhopConnection = nil
+            _G.Spin = false
+        end
+    end,
+})
+
+-- 🎤 Annoying Jump Sound (каждый прыжок играет звук)
+local JumpSoundToggle = MainTab:CreateToggle({
+    Name = "🎤 Jump Sound",
+    CurrentValue = false,
+    Flag = "JumpSoundToggle",
+    Callback = function(Value)
+        if Value then
+            _G.JumpSound = game:GetService("UserInputService").JumpRequest:Connect(function()
+                local sound = Instance.new("Sound")
+                sound.SoundId = "rbxassetid://12222142" -- смешной звук
+                sound.Volume = 5
+                sound.Parent = workspace
+                sound:Play()
+                game.Debris:AddItem(sound, 2)
+            end)
+        else
+            if _G.JumpSound then _G.JumpSound:Disconnect() end
+        end
+    end,
+})
+
+-- 👻 Fake Lag (телепортация вперёд-назад, будто лагаешь)
+local FakeLagToggle = MainTab:CreateToggle({
+    Name = "👻 Fake Lag",
+    CurrentValue = false,
+    Flag = "FakeLagToggle",
+    Callback = function(Value)
+        if Value then
+            _G.FakeLag = true
+            task.spawn(function()
+                while _G.FakeLag do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        local root = LocalPlayer.Character.HumanoidRootPart
+                        root.CFrame = root.CFrame + Vector3.new(0,0,5)
+                        task.wait(0.3)
+                        root.CFrame = root.CFrame - Vector3.new(0,0,5)
+                    end
+                    task.wait(0.3)
+                end
+            end)
+        else
+            _G.FakeLag = false
+        end
+    end,
+})
+
+
+-- 🐰 BunnyHop
+local BunnyHopToggle = MainTab:CreateToggle({
+    Name = "🐰 BunnyHop",
+    CurrentValue = false,
+    Flag = "BunnyHopToggle",
+    Callback = function(Value)
+        if Value then
+            _G.Bhop = true
+            local uis = game:GetService("UserInputService")
+            task.spawn(function()
+                while _G.Bhop do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
+                        local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+                        if hum.FloorMaterial ~= Enum.Material.Air then
+                            hum:ChangeState("Jumping")
+                        end
+                    end
+                    task.wait(0.2)
+                end
+            end)
+        else
+            _G.Bhop = false
+        end
+    end,
+})
+
+-- 🐟 Flop Like Fish (персонаж падает и дрыгается)
+local FishToggle = MainTab:CreateToggle({
+    Name = "🐟 Flop Like Fish",
+    CurrentValue = false,
+    Flag = "FishToggle",
+    Callback = function(Value)
+        if Value then
+            _G.Fish = true
+            task.spawn(function()
+                while _G.Fish do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        LocalPlayer.Character.HumanoidRootPart.CFrame *= CFrame.Angles(math.rad(90),0,0)
+                    end
+                    task.wait(0.2)
+                end
+            end)
+        else
+            _G.Fish = false
+        end
+    end,
+})
+
+-- 🎈 Balloon Mode (персонаж подпрыгивает как шарик)
+local BalloonToggle = MainTab:CreateToggle({
+    Name = "🎈 Balloon Mode",
+    CurrentValue = false,
+    Flag = "BalloonToggle",
+    Callback = function(Value)
+        if Value then
+            _G.Balloon = true
+            task.spawn(function()
+                while _G.Balloon do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,50,0)
+                    end
+                    task.wait(1)
+                end
+            end)
+        else
+            _G.Balloon = false
+        end
+    end,
+})
+
+-- 🦀 Crab Walk (ходит боком как краб)
+local CrabWalkToggle = MainTab:CreateToggle({
+    Name = "🦀 Crab Walk",
+    CurrentValue = false,
+    Flag = "CrabWalkToggle",
+    Callback = function(Value)
+        if Value then
+            _G.CrabWalk = true
+            task.spawn(function()
+                while _G.CrabWalk do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        LocalPlayer.Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(90), 0)
+                    end
+                    task.wait(0.5)
+                end
+            end)
+        else
+            _G.CrabWalk = false
+        end
+    end,
+})
+
+-- 📢 OOF Spam (каждый шаг играет "Roblox OOF")
+local OOFSpamToggle = MainTab:CreateToggle({
+    Name = "📢 OOF Spam",
+    CurrentValue = false,
+    Flag = "OOFSpamToggle",
+    Callback = function(Value)
+        if Value then
+            _G.OOF = true
+            task.spawn(function()
+                while _G.OOF do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                        local sound = Instance.new("Sound")
+                        sound.SoundId = "rbxassetid://138083993" -- OOF звук
+                        sound.Volume = 5
+                        sound.Parent = workspace
+                        sound:Play()
+                        game.Debris:AddItem(sound, 1)
+                    end
+                    task.wait(0.5)
+                end
+            end)
+        else
+            _G.OOF = false
+        end
+    end,
+})
+
+-- 🐸 Shrink & Grow (рандомно меняет размер тела)
+local MemeSizeToggle = MainTab:CreateToggle({
+    Name = "🐸 Shrink & Grow",
+    CurrentValue = false,
+    Flag = "MemeSizeToggle",
+    Callback = function(Value)
+        if Value then
+            _G.SizeMeme = true
+            task.spawn(function()
+                while _G.SizeMeme do
+                    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                        local hum = LocalPlayer.Character:FindFirstChild("Humanoid")
+                        hum.BodyHeightScale.Value = math.random(5,15)/10
+                        hum.BodyWidthScale.Value = math.random(5,15)/10
+                        hum.BodyDepthScale.Value = math.random(5,15)/10
+                    end
+                    task.wait(1)
+                end
+            end)
+        else
+            _G.SizeMeme = false
+        end
+    end,
+})
+
+-- 🚀 YEET Jump (смешной гиперпрыжок с криком)
+local YeetToggle = MainTab:CreateToggle({
+    Name = "🚀 YEET Jump",
+    CurrentValue = false,
+    Flag = "YeetToggle",
+    Callback = function(Value)
+        if Value then
+            _G.Yeet = game:GetService("UserInputService").JumpRequest:Connect(function()
+                if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    local root = LocalPlayer.Character.HumanoidRootPart
+                    root.Velocity = Vector3.new(0,200,0)
+                    local sound = Instance.new("Sound")
+                    sound.SoundId = "rbxassetid://1847853096" -- YEET
+                    sound.Volume = 10
+                    sound.Parent = workspace
+                    sound:Play()
+                    game.Debris:AddItem(sound, 2)
+                end
+            end)
+        else
+            if _G.Yeet then _G.Yeet:Disconnect() end
+        end
+    end,
+})
+
+-- 🌀 Head Spin (вращение головы)
+local HeadSpinToggle = MainTab:CreateToggle({
+    Name = "🌀 Head Spin",
+    CurrentValue = false,
+    Flag = "HeadSpinToggle",
+    Callback = function(Value)
+        if Value then
+            _G.HeadSpin = true
+            task.spawn(function()
+                while _G.HeadSpin do
+                    local char = LocalPlayer.Character
+                    if char and char:FindFirstChild("Head") then
+                        char.Head.CFrame *= CFrame.Angles(0, math.rad(45), 0)
+                    end
+                    task.wait(0.1)
+                end
+            end)
+        else
+            _G.HeadSpin = false
+        end
+    end,
+})
+
+-- 🎲 Random Teleport
+local RandomTPToggle = MainTab:CreateToggle({
+    Name = "🎲 Random Teleport",
+    CurrentValue = false,
+    Flag = "RandomTPToggle",
+    Callback = function(Value)
+        if Value then
+            _G.RandomTP = true
+            task.spawn(function()
+                while _G.RandomTP do
+                    local char = LocalPlayer.Character
+                    local root = char and char:FindFirstChild("HumanoidRootPart")
+                    if root then
+                        root.CFrame = CFrame.new(math.random(-100,100), math.random(5,50), math.random(-100,100))
+                    end
+                    task.wait(3)
+                end
+            end)
+        else
+            _G.RandomTP = false
+        end
+    end,
+})
+
+-- 🔄 Fake Gravity Flip
+local GravityFlipToggle = MainTab:CreateToggle({
+    Name = "🔄 Gravity Flip",
+    CurrentValue = false,
+    Flag = "GravityFlipToggle",
+    Callback = function(Value)
+        if Value then
+            _G.GravityFlip = true
+            task.spawn(function()
+                while _G.GravityFlip do
+                    local char = LocalPlayer.Character
+                    if char and char:FindFirstChild("HumanoidRootPart") then
+                        local root = char.HumanoidRootPart
+                        root.CFrame = root.CFrame * CFrame.Angles(math.rad(180),0,0)
+                    end
+                    task.wait(2)
+                end
+            end)
+        else
+            _G.GravityFlip = false
+        end
+    end,
+})
+
+-- 😂 Laugh Spam
+local LaughSpamToggle = MainTab:CreateToggle({
+    Name = "😂 Laugh Spam",
+    CurrentValue = false,
+    Flag = "LaughSpamToggle",
+    Callback = function(Value)
+        if Value then
+            _G.LaughSpam = true
+            task.spawn(function()
+                while _G.LaughSpam do
+                    game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("HAHAHA", "All")
+                    task.wait(1)
+                end
+            end)
+        else
+            _G.LaughSpam = false
+        end
+    end,
+})
+
+-- 🌙 Moon Gravity
+local MoonGravityToggle = MainTab:CreateToggle({
+    Name = "🌙 Moon Gravity",
+    CurrentValue = false,
+    Flag = "MoonGravityToggle",
+    Callback = function(Value)
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.UseJumpPower = true
+            hum.JumpPower = Value and 150 or 50
+            hum.GravityScale = Value and 0.3 or 1 -- низкая гравитация
+        end
+    end,
+})
+
+-- 🧠 Big Head Mode
+local BigHeadToggle = MainTab:CreateToggle({
+    Name = "🧠 Big Head Mode",
+    CurrentValue = false,
+    Flag = "BigHeadToggle",
+    Callback = function(Value)
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChild("Head") then
+            char.Head.Size = Value and Vector3.new(6,6,6) or Vector3.new(2,2,2)
+        end
+    end,
+})
+
+-- 🦵 Tiny Legs Mode
+local TinyLegsToggle = MainTab:CreateToggle({
+    Name = "🦵 Tiny Legs Mode",
+    CurrentValue = false,
+    Flag = "TinyLegsToggle",
+    Callback = function(Value)
+        local char = LocalPlayer.Character
+        if char then
+            for _, limb in pairs({"LeftLeg","RightLeg"}) do
+                local part = char:FindFirstChild(limb)
+                if part then
+                    part.Size = Value and Vector3.new(0.5,0.5,0.5) or Vector3.new(1,2,1)
+                end
             end
         end
     end,
 })
+
+-- 🌀 Spinning Arms
+local SpinArmsToggle = MainTab:CreateToggle({
+    Name = "🌀 Spinning Arms",
+    CurrentValue = false,
+    Flag = "SpinArmsToggle",
+    Callback = function(Value)
+        _G.SpinArms = Value
+        task.spawn(function()
+            while _G.SpinArms do
+                local char = LocalPlayer.Character
+                for _, limb in pairs({"LeftUpperArm","RightUpperArm","LeftLowerArm","RightLowerArm"}) do
+                    local part = char and char:FindFirstChild(limb)
+                    if part then
+                        part.CFrame *= CFrame.Angles(0, math.rad(30), 0)
+                    end
+                end
+                task.wait(0.05)
+            end
+        end)
+    end,
+})
+
+-- 🔄 Invert Controls
+local InvertControlsToggle = MainTab:CreateToggle({
+    Name = "🔄 Invert Controls",
+    CurrentValue = false,
+    Flag = "InvertControlsToggle",
+    Callback = function(Value)
+        _G.InvertControls = Value
+        local uis = game:GetService("UserInputService")
+        if Value then
+            uis.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.Keyboard then
+                    -- блокируем стандартное управление и делаем обратное
+                    -- здесь можно вставить твою логику для инвертирования
+                end
+            end)
+        end
+    end,
+})
+
+-- 🎲 Random Size Change
+local RandomSizeToggle = MainTab:CreateToggle({
+    Name = "🎲 Random Size Change",
+    CurrentValue = false,
+    Flag = "RandomSizeToggle",
+    Callback = function(Value)
+        _G.RandomSize = Value
+        task.spawn(function()
+            while _G.RandomSize do
+                local char = LocalPlayer.Character
+                if char and char:FindFirstChildOfClass("Humanoid") then
+                    local scale = math.random(5,20)/10
+                    local hum = char:FindFirstChildOfClass("Humanoid")
+                    hum.BodyHeightScale.Value = scale
+                    hum.BodyWidthScale.Value = scale
+                    hum.BodyDepthScale.Value = scale
+                end
+                task.wait(2)
+            end
+        end)
+    end,
+})
+
+-- 🎥 Shake Camera
+local ShakeCameraToggle = MainTab:CreateToggle({
+    Name = "🎥 Shake Camera",
+    CurrentValue = false,
+    Flag = "ShakeCameraToggle",
+    Callback = function(Value)
+        _G.ShakeCamera = Value
+        task.spawn(function()
+            local cam = workspace.CurrentCamera
+            while _G.ShakeCamera do
+                cam.CFrame = cam.CFrame * CFrame.new(math.random(-1,1)/5, math.random(-1,1)/5, 0)
+                task.wait(0.05)
+            end
+        end)
+    end,
+})
+
+-- 🌀 Spinning Body
+local SpinBodyToggle = MainTab:CreateToggle({
+    Name = "🌀 Spinning Body",
+    CurrentValue = false,
+    Flag = "SpinBodyToggle",
+    Callback = function(Value)
+        _G.SpinBody = Value
+        task.spawn(function()
+            while _G.SpinBody do
+                local char = LocalPlayer.Character
+                local root = char and char:FindFirstChild("HumanoidRootPart")
+                if root then
+                    root.CFrame *= CFrame.Angles(0, math.rad(45), 0)
+                end
+                task.wait(0.05)
+            end
+        end)
+    end,
+})
+
+-- 🔥 Insta Kill / One Hit
+local InstaKillToggle = MainTab:CreateToggle({
+    Name = "🔥 Insta Kill",
+    CurrentValue = false,
+    Flag = "InstaKillToggle",
+    Callback = function(Value)
+        _G.InstaKill = Value
+        task.spawn(function()
+            while _G.InstaKill do
+                for _, player in pairs(game.Players:GetPlayers()) do
+                    if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
+                        player.Character.Humanoid.Health = 0
+                    end
+                end
+                task.wait(0.1)
+            end
+        end)
+    end,
+})
+
+-- 🚀 Teleport Dash (мгновенный рывок вперёд)
+local TeleportDashToggle = MainTab:CreateToggle({
+    Name = "🚀 Teleport Dash",
+    CurrentValue = false,
+    Flag = "TeleportDashToggle",
+    Callback = function(Value)
+        _G.TeleportDash = Value
+        local uis = game:GetService("UserInputService")
+        uis.InputBegan:Connect(function(input)
+            if _G.TeleportDash and input.KeyCode == Enum.KeyCode.LeftShift then
+                local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if root then
+                    root.CFrame = root.CFrame + root.CFrame.LookVector * 50
+                end
+            end
+        end)
+    end,
+})
+
+-- 💨 Speed Burst
+local SpeedBurstToggle = MainTab:CreateToggle({
+    Name = "💨 Speed Burst",
+    CurrentValue = false,
+    Flag = "SpeedBurstToggle",
+    Callback = function(Value)
+        local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+        if hum then
+            hum.WalkSpeed = Value and 100 or 16
+        end
+    end,
+})
+
+-- 🛡️ God Mode (неуязвимость)
+local GodModeToggle = MainTab:CreateToggle({
+    Name = "🛡️ God Mode",
+    CurrentValue = false,
+    Flag = "GodModeToggle",
+    Callback = function(Value)
+        _G.GodMode = Value
+        local char = LocalPlayer.Character
+        if char and char:FindFirstChildOfClass("Humanoid") then
+            local hum = char:FindFirstChildOfClass("Humanoid")
+            hum.MaxHealth = Value and math.huge or 100
+            hum.Health = hum.MaxHealth
+        end
+    end,
+})
+
+-- 🧲 Magnet Loot (подтаскивает предметы к тебе)
+local MagnetLootToggle = MainTab:CreateToggle({
+    Name = "🧲 Magnet Loot",
+    CurrentValue = false,
+    Flag = "MagnetLootToggle",
+    Callback = function(Value)
+        _G.MagnetLoot = Value
+        task.spawn(function()
+            while _G.MagnetLoot do
+                for _, obj in pairs(workspace:GetDescendants()) do
+                    if obj:IsA("BasePart") and obj.Name:match("Loot") then
+                        local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                        if root then
+                            obj.Position = root.Position + Vector3.new(0,2,0)
+                        end
+                    end
+                end
+                task.wait(0.1)
+            end
+        end)
+    end,
+})
+
+-- Функция WallHop
+function WallhopToggle()
+    Name = "🧱 WallHop",
+    CurrentValue = false,
+    Flag = "WallhopToggle",
+    Callback = function(Value)
+    local player = game.Players.LocalPlayer
+    local character = player.Character or player.CharacterAdded:Wait()
+    local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
+
+    -- Имитация прыжка вверх и вперёд (отталкивание от стены)
+    humanoidRootPart.Velocity = Vector3.new(0, 50, 0) + humanoidRootPart.CFrame.LookVector * 30
+end
 
 -- Noclip Function
 local noclip = false
