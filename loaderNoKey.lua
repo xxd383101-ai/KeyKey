@@ -42,41 +42,7 @@ local NewFlyToggle = MainTab:CreateToggle({
     Name = "🛸 New Flight Mode",
     CurrentValue = false,
     Flag = "NewFly",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         newFlyEnabled = Value
         local character = LocalPlayer.Character
         if not character then return end
@@ -94,40 +60,6 @@ local NewFlyToggle = MainTab:CreateToggle({
 
             -- Присвоение перемещения
             newFlyConnection = RunService.Heartbeat:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 if not newFlyEnabled or not rootPart then return end
                 local moveDir = Vector3.zero
                 local camCF = workspace.CurrentCamera.CFrame
@@ -189,41 +121,7 @@ local NewFlySpeedSlider = MainTab:CreateSlider({
     Suffix = "studs",
     CurrentValue = 100,
     Flag = "NewFlySpeed",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         newFlySpeed = Value
     end,
 })
@@ -233,78 +131,10 @@ local SpinToggle = MainTab:CreateToggle({
     Name = "🏎️ Auto Spin",
     CurrentValue = false,
     Flag = "SpinToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.Spin = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.Spin do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         LocalPlayer.Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(30), 0)
@@ -323,77 +153,9 @@ local JumpSoundToggle = MainTab:CreateToggle({
     Name = "🎤 Jump Sound",
     CurrentValue = false,
     Flag = "JumpSoundToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.JumpSound = game:GetService("UserInputService").JumpRequest:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 local sound = Instance.new("Sound")
                 sound.SoundId = "rbxassetid://12222142" -- смешной звук
                 sound.Volume = 5
@@ -412,78 +174,10 @@ local FakeLagToggle = MainTab:CreateToggle({
     Name = "👻 Fake Lag",
     CurrentValue = false,
     Flag = "FakeLagToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.FakeLag = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.FakeLag do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         local root = LocalPlayer.Character.HumanoidRootPart
@@ -506,79 +200,11 @@ local BunnyHopToggle = MainTab:CreateToggle({
     Name = "🐰 BunnyHop",
     CurrentValue = false,
     Flag = "BunnyHopToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.Bhop = true
             local uis = game:GetService("UserInputService")
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.Bhop do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid") then
                         local hum = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
@@ -600,78 +226,10 @@ local FishToggle = MainTab:CreateToggle({
     Name = "🐟 Flop Like Fish",
     CurrentValue = false,
     Flag = "FishToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.Fish = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.Fish do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         LocalPlayer.Character.HumanoidRootPart.CFrame *= CFrame.Angles(math.rad(90),0,0)
@@ -690,78 +248,10 @@ local BalloonToggle = MainTab:CreateToggle({
     Name = "🎈 Balloon Mode",
     CurrentValue = false,
     Flag = "BalloonToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.Balloon = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.Balloon do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0,50,0)
@@ -780,78 +270,10 @@ local CrabWalkToggle = MainTab:CreateToggle({
     Name = "🦀 Crab Walk",
     CurrentValue = false,
     Flag = "CrabWalkToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.CrabWalk = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.CrabWalk do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         LocalPlayer.Character.HumanoidRootPart.CFrame *= CFrame.Angles(0, math.rad(90), 0)
@@ -870,78 +292,10 @@ local OOFSpamToggle = MainTab:CreateToggle({
     Name = "📢 OOF Spam",
     CurrentValue = false,
     Flag = "OOFSpamToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.OOF = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.OOF do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                         local sound = Instance.new("Sound")
@@ -965,78 +319,10 @@ local MemeSizeToggle = MainTab:CreateToggle({
     Name = "🐸 Shrink & Grow",
     CurrentValue = false,
     Flag = "MemeSizeToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.SizeMeme = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.SizeMeme do
                     if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
                         local hum = LocalPlayer.Character:FindFirstChild("Humanoid")
@@ -1058,77 +344,9 @@ local YeetToggle = MainTab:CreateToggle({
     Name = "🚀 YEET Jump",
     CurrentValue = false,
     Flag = "YeetToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.Yeet = game:GetService("UserInputService").JumpRequest:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
                     local root = LocalPlayer.Character.HumanoidRootPart
                     root.Velocity = Vector3.new(0,200,0)
@@ -1151,78 +369,10 @@ local HeadSpinToggle = MainTab:CreateToggle({
     Name = "🌀 Head Spin",
     CurrentValue = false,
     Flag = "HeadSpinToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.HeadSpin = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.HeadSpin do
                     local char = LocalPlayer.Character
                     if char and char:FindFirstChild("Head") then
@@ -1242,78 +392,10 @@ local RandomTPToggle = MainTab:CreateToggle({
     Name = "🎲 Random Teleport",
     CurrentValue = false,
     Flag = "RandomTPToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.RandomTP = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.RandomTP do
                     local char = LocalPlayer.Character
                     local root = char and char:FindFirstChild("HumanoidRootPart")
@@ -1334,78 +416,10 @@ local GravityFlipToggle = MainTab:CreateToggle({
     Name = "🔄 Gravity Flip",
     CurrentValue = false,
     Flag = "GravityFlipToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.GravityFlip = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.GravityFlip do
                     local char = LocalPlayer.Character
                     if char and char:FindFirstChild("HumanoidRootPart") then
@@ -1426,78 +440,10 @@ local LaughSpamToggle = MainTab:CreateToggle({
     Name = "😂 Laugh Spam",
     CurrentValue = false,
     Flag = "LaughSpamToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             _G.LaughSpam = true
             task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 while _G.LaughSpam do
                     game.ReplicatedStorage.DefaultChatSystemChatEvents.SayMessageRequest:FireServer("HAHAHA", "All")
                     task.wait(1)
@@ -1514,41 +460,7 @@ local MoonGravityToggle = MainTab:CreateToggle({
     Name = "🌙 Moon Gravity",
     CurrentValue = false,
     Flag = "MoonGravityToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
         if hum then
             hum.UseJumpPower = true
@@ -1563,41 +475,7 @@ local BigHeadToggle = MainTab:CreateToggle({
     Name = "🧠 Big Head Mode",
     CurrentValue = false,
     Flag = "BigHeadToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         local char = LocalPlayer.Character
         if char and char:FindFirstChild("Head") then
             char.Head.Size = Value and Vector3.new(6,6,6) or Vector3.new(2,2,2)
@@ -1610,41 +488,7 @@ local TinyLegsToggle = MainTab:CreateToggle({
     Name = "🦵 Tiny Legs Mode",
     CurrentValue = false,
     Flag = "TinyLegsToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         local char = LocalPlayer.Character
         if char then
             for _, limb in pairs({"LeftLeg","RightLeg"}) do
@@ -1662,77 +506,9 @@ local SpinArmsToggle = MainTab:CreateToggle({
     Name = "🌀 Spinning Arms",
     CurrentValue = false,
     Flag = "SpinArmsToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.SpinArms = Value
         task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
             while _G.SpinArms do
                 local char = LocalPlayer.Character
                 for _, limb in pairs({"LeftUpperArm","RightUpperArm","LeftLowerArm","RightLowerArm"}) do
@@ -1752,79 +528,11 @@ local InvertControlsToggle = MainTab:CreateToggle({
     Name = "🔄 Invert Controls",
     CurrentValue = false,
     Flag = "InvertControlsToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.InvertControls = Value
         local uis = game:GetService("UserInputService")
         if Value then
-            uis.InputBegan:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(input)
+            uis.InputBegan:Connect(function(input)
                 if input.UserInputType == Enum.UserInputType.Keyboard then
                     -- блокируем стандартное управление и делаем обратное
                     -- здесь можно вставить твою логику для инвертирования
@@ -1839,77 +547,9 @@ local RandomSizeToggle = MainTab:CreateToggle({
     Name = "🎲 Random Size Change",
     CurrentValue = false,
     Flag = "RandomSizeToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.RandomSize = Value
         task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
             while _G.RandomSize do
                 local char = LocalPlayer.Character
                 if char and char:FindFirstChildOfClass("Humanoid") then
@@ -1930,77 +570,9 @@ local ShakeCameraToggle = MainTab:CreateToggle({
     Name = "🎥 Shake Camera",
     CurrentValue = false,
     Flag = "ShakeCameraToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.ShakeCamera = Value
         task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
             local cam = workspace.CurrentCamera
             while _G.ShakeCamera do
                 cam.CFrame = cam.CFrame * CFrame.new(math.random(-1,1)/5, math.random(-1,1)/5, 0)
@@ -2015,77 +587,9 @@ local SpinBodyToggle = MainTab:CreateToggle({
     Name = "🌀 Spinning Body",
     CurrentValue = false,
     Flag = "SpinBodyToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.SpinBody = Value
         task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
             while _G.SpinBody do
                 local char = LocalPlayer.Character
                 local root = char and char:FindFirstChild("HumanoidRootPart")
@@ -2103,77 +607,9 @@ local InstaKillToggle = MainTab:CreateToggle({
     Name = "🔥 Insta Kill",
     CurrentValue = false,
     Flag = "InstaKillToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.InstaKill = Value
         task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
             while _G.InstaKill do
                 for _, player in pairs(game.Players:GetPlayers()) do
                     if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Humanoid") then
@@ -2191,78 +627,10 @@ local TeleportDashToggle = MainTab:CreateToggle({
     Name = "🚀 Teleport Dash",
     CurrentValue = false,
     Flag = "TeleportDashToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.TeleportDash = Value
         local uis = game:GetService("UserInputService")
-        uis.InputBegan:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(input)
+        uis.InputBegan:Connect(function(input)
             if _G.TeleportDash and input.KeyCode == Enum.KeyCode.LeftShift then
                 local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                 if root then
@@ -2278,41 +646,7 @@ local SpeedBurstToggle = MainTab:CreateToggle({
     Name = "💨 Speed Burst",
     CurrentValue = false,
     Flag = "SpeedBurstToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         local hum = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
         if hum then
             hum.WalkSpeed = Value and 100 or 16
@@ -2325,41 +659,7 @@ local GodModeToggle = MainTab:CreateToggle({
     Name = "🛡️ God Mode",
     CurrentValue = false,
     Flag = "GodModeToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.GodMode = Value
         local char = LocalPlayer.Character
         if char and char:FindFirstChildOfClass("Humanoid") then
@@ -2375,77 +675,9 @@ local MagnetLootToggle = MainTab:CreateToggle({
     Name = "🧲 Magnet Loot",
     CurrentValue = false,
     Flag = "MagnetLootToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         _G.MagnetLoot = Value
         task.spawn(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
             while _G.MagnetLoot do
                 for _, obj in pairs(workspace:GetDescendants()) do
                     if obj:IsA("BasePart") and obj.Name:match("Loot") then
@@ -2462,79 +694,11 @@ local MagnetLootToggle = MainTab:CreateToggle({
 })
 
 -- Функция WallHop
-function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion WallhopToggle()
+function WallhopToggle()
     Name = "🧱 WallHop",
     CurrentValue = false,
     Flag = "WallhopToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
@@ -2556,41 +720,7 @@ local NoclipToggle = MainTab:CreateToggle({
     Name = "👻 Noclip",
     CurrentValue = false,
     Flag = "NoclipToggle",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         noclip = Value
         if noclip then
             if LocalPlayer.Character then
@@ -2602,40 +732,6 @@ local NoclipToggle = MainTab:CreateToggle({
             end
             
             noclipConnection = RunService.Stepped:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 if noclip and LocalPlayer.Character then
                     for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                         if part:IsA("BasePart") then
@@ -2665,41 +761,7 @@ local SpeedHackSlider = MainTab:CreateSlider({
     Suffix = "studs",
     CurrentValue = 16,
     Flag = "SpeedHack",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if LocalPlayer.Character then
             local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -2717,41 +779,7 @@ local JumpPowerSlider = MainTab:CreateSlider({
     Suffix = "power",
     CurrentValue = 50,
     Flag = "JumpPower",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if LocalPlayer.Character then
             local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -2768,80 +796,12 @@ local InfiniteJumpToggle = MainTab:CreateToggle({
     Name = "∞ Infinite Jump",
     CurrentValue = false,
     Flag = "InfiniteJump",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         infiniteJump = Value
     end,
 })
 
 UserInputService.JumpRequest:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
     if infiniteJump and LocalPlayer.Character then
         local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
         if humanoid and humanoid:GetState() ~= Enum.HumanoidStateType.Dead then
@@ -2858,41 +818,7 @@ local GodModeToggle = MainTab:CreateToggle({
     Name = "🛡️ God Mode",
     CurrentValue = false,
     Flag = "GodMode",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if LocalPlayer.Character then
             local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -2912,40 +838,6 @@ local GodModeToggle = MainTab:CreateToggle({
 local KillAllButton = MainTab:CreateButton({
     Name = "💀 Kill All Players",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         Rayfield:Notify({
             Title = "Kill All",
             Content = "Attempting to kill all players...",
@@ -2971,41 +863,7 @@ local AimbotToggle = MainTab:CreateToggle({
     Name = "🎯 Aimbot",
     CurrentValue = false,
     Flag = "Aimbot",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         aimbotEnabled = Value
         if aimbotEnabled then
             Rayfield:Notify({
@@ -3022,41 +880,7 @@ local TeleportTab = Window:CreateTab("Teleport", 4483353530)
 
 -- Player list for teleport
 local playerList = {}
-local function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion updatePlayerList()
+local function updatePlayerList()
     playerList = {}
     for _, player in pairs(Players:GetPlayers()) do
         if player ~= LocalPlayer then
@@ -3075,41 +899,7 @@ local playerDropdown = TeleportTab:CreateDropdown({
     Options = playerList,
     CurrentOption = playerList[1] or "No players",
     Flag = "PlayerDropdown",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Option)
+    Callback = function(Option)
         -- Just store selection
     end,
 })
@@ -3117,40 +907,6 @@ local playerDropdown = TeleportTab:CreateDropdown({
 local TeleportButton = TeleportTab:CreateButton({
     Name = "📡 Teleport to Player",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         local targetName = playerDropdown.CurrentOption
         if targetName and targetName ~= "No players" then
             local targetPlayer = Players:FindFirstChild(targetName)
@@ -3181,40 +937,6 @@ local TeleportButton = TeleportTab:CreateButton({
 local BringButton = TeleportTab:CreateButton({
     Name = "📥 Bring Player to You",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         local targetName = playerDropdown.CurrentOption
         if targetName and targetName ~= "No players" then
             local targetPlayer = Players:FindFirstChild(targetName)
@@ -3240,162 +962,26 @@ local XInput = TeleportTab:CreateInput({
     Name = "X Coordinate",
     PlaceholderText = "0",
     RemoveTextAfterFocusLost = false,
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Text) end,
+    Callback = function(Text) end,
 })
 
 local YInput = TeleportTab:CreateInput({
     Name = "Y Coordinate",
     PlaceholderText = "0",
     RemoveTextAfterFocusLost = false,
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Text) end,
+    Callback = function(Text) end,
 })
 
 local ZInput = TeleportTab:CreateInput({
     Name = "Z Coordinate",
     PlaceholderText = "0",
     RemoveTextAfterFocusLost = false,
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Text) end,
+    Callback = function(Text) end,
 })
 
 local TeleportCoordButton = TeleportTab:CreateButton({
     Name = "📍 Teleport to Coordinates",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         local x = tonumber(XInput.Value) or 0
         local y = tonumber(YInput.Value) or 0
         local z = tonumber(ZInput.Value) or 0
@@ -3416,40 +1002,6 @@ local TeleportCoordButton = TeleportTab:CreateButton({
 local SpawnButton = TeleportTab:CreateButton({
     Name = "🏠 Teleport to Spawn",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
         if localRoot then
             localRoot.CFrame = CFrame.new(0, 100, 0)
@@ -3473,41 +1025,7 @@ local ESPToggle = VisualsTab:CreateToggle({
     Name = "👁️ Player ESP",
     CurrentValue = false,
     Flag = "ESP",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         espEnabled = Value
         if espEnabled then
             for _, player in pairs(Players:GetPlayers()) do
@@ -3524,41 +1042,7 @@ local ESPToggle = VisualsTab:CreateToggle({
     end,
 })
 
-function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion espCreate(player)
+function espCreate(player)
     local character = player.Character or player.CharacterAdded:Wait()
     local highlight = Instance.new("Highlight")
     highlight.Parent = character
@@ -3574,41 +1058,7 @@ local FullbrightToggle = VisualsTab:CreateToggle({
     Name = "💡 Fullbright",
     CurrentValue = false,
     Flag = "Fullbright",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             Lighting.Ambient = Color3.new(1, 1, 1)
             Lighting.Brightness = 2
@@ -3626,41 +1076,7 @@ local XRayToggle = VisualsTab:CreateToggle({
     Name = "🔍 X-Ray Vision",
     CurrentValue = false,
     Flag = "XRay",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if LocalPlayer.Character then
             local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
             if humanoid then
@@ -3678,77 +1094,9 @@ local AntiAfkToggle = MiscTab:CreateToggle({
     Name = "⏰ Anti AFK",
     CurrentValue = false,
     Flag = "AntiAFK",
-    Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion(Value)
+    Callback = function(Value)
         if Value then
             LocalPlayer.Idled:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
                 game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
                 wait(1)
                 game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
@@ -3761,40 +1109,6 @@ local AntiAfkToggle = MiscTab:CreateToggle({
 local ServerHopButton = MiscTab:CreateButton({
     Name = "🔄 Server Hop",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         Rayfield:Notify({
             Title = "Server Hop",
             Content = "Searching for new server...",
@@ -3815,40 +1129,6 @@ local ServerHopButton = MiscTab:CreateButton({
 local FPSBoostButton = MiscTab:CreateButton({
     Name = "⚡ FPS Boost",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         settings().Rendering.QualityLevel = 1
         for _, light in pairs(workspace:GetDescendants()) do
             if light:IsA("PointLight") or light:IsA("SpotLight") then
@@ -3868,40 +1148,6 @@ local FPSBoostButton = MiscTab:CreateButton({
 local ResetButton = MiscTab:CreateButton({
     Name = "🔁 Reset Character",
     Callback = function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
         if LocalPlayer.Character then
             LocalPlayer.Character:BreakJoints()
         end
@@ -3910,40 +1156,6 @@ local ResetButton = MiscTab:CreateButton({
 
 -- Aimbot loop
 RunService.Heartbeat:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
     if aimbotEnabled then
         local closestPlayer = nil
         local closestDistance = math.huge
@@ -3974,50 +1186,9 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- Уведомление о загрузке
-Rayfield:Notify({
-    Title = "Turbo Script v2.0 Loaded! 🚀",
-    Content = "Fixed Fly + WallHop + New Features!",
-    Duration = 6,
-    Image = 4483362458,
-})
 
 -- Автоматическая очистка
 game:GetService("UserInputService").WindowFocusReleased:Connect(function()
-                if newFlyEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
-                    local rootPart = LocalPlayer.Character.HumanoidRootPart
-                    local moveDirection = Vector3.zero
-
-                    if UserInputService:IsKeyDown(Enum.KeyCode.W) then
-                        moveDirection += rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.S) then
-                        moveDirection -= rootPart.CFrame.LookVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.A) then
-                        moveDirection -= rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.D) then
-                        moveDirection += rootPart.CFrame.RightVector
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.Space) then
-                        moveDirection += Vector3.new(0, 1, 0)
-                    end
-                    if UserInputService:IsKeyDown(Enum.KeyCode.LeftShift) then
-                        moveDirection -= Vector3.new(0, 1, 0)
-                    end
-
-                    if moveDirection.Magnitude > 0 then
-                        newFlyBodyVel.Velocity = moveDirection.Unit * newFlySpeed
-                    else
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                else
-                    if newFlyBodyVel then
-                        newFlyBodyVel.Velocity = Vector3.zero
-                    end
-                end
-            endion()
     if flying then
         flying = false
         if flyConnection then flyConnection:Disconnect() end
