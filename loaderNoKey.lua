@@ -126,9 +126,6 @@ local NewFlySpeedSlider = MainTab:CreateSlider({
     end,
 })
 
-local MovementSection = MainTab:CreateSection("Movement Features")
-
-
 -- 🏎️ Auto Spin (вращает персонажа на месте)
 local SpinToggle = MainTab:CreateToggle({
     Name = "🏎️ Auto Spin",
@@ -709,6 +706,11 @@ function WallhopToggle()
     -- Имитация прыжка вверх и вперёд (отталкивание от стены)
     humanoidRootPart.Velocity = Vector3.new(0, 50, 0) + humanoidRootPart.CFrame.LookVector * 30
 end
+
+
+local MovementSection = MainTab:CreateSection("Movement Features")
+
+
 
 -- Noclip Function
 local noclip = false
