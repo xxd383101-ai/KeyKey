@@ -9,11 +9,12 @@ local UserInputService = game:GetService("UserInputService")
 local Lighting = game:GetService("Lighting")
 local TeleportService = game:GetService("TeleportService")
 local TweenService = game:GetService("TweenService")
+local MarketplaceService = game:GetService("MarketplaceService")
 
 -- Красивое окно
 local Window = Rayfield:CreateWindow({
-   Name = "🧠 Ultimate Brainrot Stealer",
-   LoadingTitle = "Brainrot Stealer Loading...",
+   Name = "🧠 ULTIMATE BRAINROT STEALER",
+   LoadingTitle = "Loading Ultimate Brainrot Stealer...",
    LoadingSubtitle = "by TurboModder | t.me/TurboHackMods",
    Theme = "Dark",
    ConfigurationSaving = {
@@ -23,274 +24,126 @@ local Window = Rayfield:CreateWindow({
    },
 })
 
--- Вкладка Teleport
-local TeleportTab = Window:CreateTab("📍 Teleport", 4483353530)
+-- Вкладка Auto Farm
+local AutoFarmTab = Window:CreateTab("🤖 Auto Farm", 4483362458)
 
--- Плавный полет к базе с выбором скорости
-local FlyToBaseSection = TeleportTab:CreateSection("Fly To Base")
-
-local FlySpeedSlider = TeleportTab:CreateSlider({
-    Name = "🚀 Fly Speed",
-    Range = {10, 200},
-    Increment = 5,
-    Suffix = "studs/sec",
-    CurrentValue = 50,
-    Flag = "FlySpeed",
-    Callback = function(Value)
-        _G.FlySpeed = Value
-    end,
-})
-
-local FlyToBaseButton = TeleportTab:CreateButton({
-    Name = "🏠 Fly to Base",
-    Callback = function()
-        if not LocalPlayer.Character then return end
-        
-        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if not root then return end
-        
-        -- Поиск базы
-        local baseParts = {}
-        for _, obj in pairs(workspace:GetDescendants()) do
-            if obj.Name:lower():find("base") or obj.Name:lower():find("spawn") or obj.Name:lower():find("house") then
-                if obj:IsA("Part") or obj:IsA("MeshPart") then
-                    table.insert(baseParts, obj)
-                end
-            end
-        end
-        
-        if #baseParts == 0 then
-            Rayfield:Notify({
-                Title = "Base Not Found",
-                Content = "Could not find base, teleporting to safe zone",
-                Duration = 3,
-            })
-            root.CFrame = CFrame.new(0, 100, 0)
-            return
-        end
-        
-        -- Выбор ближайшей базы
-        local closestBase = nil
-        local closestDistance = math.huge
-        
-        for _, basePart in pairs(baseParts) do
-            local distance = (root.Position - basePart.Position).Magnitude
-            if distance < closestDistance then
-                closestDistance = distance
-                closestBase = basePart
-            end
-        end
-        
-        if closestBase then
-            Rayfield:Notify({
-                Title = "Flying to Base",
-                Content = string.format("Flying at %d studs/sec", _G.FlySpeed or 50),
-                Duration = 3,
-            })
-            
-            -- Плавный полет
-            local startPos = root.Position
-            local endPos = closestBase.Position + Vector3.new(0, 5, 0)
-            local direction = (endPos - startPos).Unit
-            local distance = (endPos - startPos).Magnitude
-            local travelTime = distance / (_G.FlySpeed or 50)
-            
-            local startTime = tick()
-            local flyConnection
-            
-            flyConnection = RunService.Heartbeat:Connect(function()
-                local elapsed = tick() - startTime
-                local progress = math.min(elapsed / travelTime, 1)
-                
-                if progress >= 1 then
-                    root.CFrame = CFrame.new(endPos)
-                    flyConnection:Disconnect()
-                    Rayfield:Notify({
-                        Title = "Arrived at Base",
-                        Content = "Successfully reached base!",
-                        Duration = 3,
-                    })
-                    return
-                end
-                
-                local currentPos = startPos + (endPos - startPos) * progress
-                root.CFrame = CFrame.new(currentPos)
-            end)
-        end
-    end,
-})
-
--- Телепорт к Brainrot
-local StealSection = TeleportTab:CreateSection("Steal Functions")
-
-local TeleportToBrainrotButton = TeleportTab:CreateButton({
-    Name = "🧠 TP to Nearest Brainrot",
-    Callback = function()
-        if not LocalPlayer.Character then return end
-        
-        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if not root then return end
-        
-        local closestBrainrot = nil
-        local closestDistance = math.huge
-        
-        for _, item in pairs(workspace:GetDescendants()) do
-            if item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin") then
-                if item:IsA("Part") or item:IsA("MeshPart") then
-                    local distance = (root.Position - item.Position).Magnitude
-                    if distance < closestDistance then
-                        closestDistance = distance
-                        closestBrainrot = item
-                    end
-                end
-            end
-        end
-        
-        if closestBrainrot then
-            root.CFrame = closestBrainrot.CFrame
-            Rayfield:Notify({
-                Title = "Teleported to Brainrot",
-                Content = "Ready to collect!",
-                Duration = 2,
-            })
-        else
-            Rayfield:Notify({
-                Title = "No Brainrot Found",
-                Content = "Could not find any Brainrot nearby",
-                Duration = 3,
-            })
-        end
-    end,
-})
-
--- Авто-сбор всех Brainrot в радиусе
-local CollectRadiusSlider = TeleportTab:CreateSlider({
-    Name = "🎯 Collection Radius",
-    Range = {10, 100},
-    Increment = 5,
-    Suffix = "studs",
-    CurrentValue = 30,
-    Flag = "CollectRadius",
-    Callback = function(Value)
-        _G.CollectRadius = Value
-    end,
-})
-
-local CollectAllInRadiusButton = TeleportTab:CreateButton({
-    Name = "🌀 Collect All in Radius",
-    Callback = function()
-        if not LocalPlayer.Character then return end
-        
-        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-        if not root then return end
-        
-        local collected = 0
-        local radius = _G.CollectRadius or 30
-        
-        for _, item in pairs(workspace:GetDescendants()) do
-            if (item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin")) then
-                if item:IsA("Part") or item:IsA("MeshPart") then
-                    local distance = (root.Position - item.Position).Magnitude
-                    if distance <= radius then
-                        root.CFrame = item.CFrame
-                        collected = collected + 1
-                        task.wait(0.1)
-                    end
-                end
-            end
-        end
-        
-        Rayfield:Notify({
-            Title = "Collection Complete",
-            Content = string.format("Collected %d items in %d stud radius", collected, radius),
-            Duration = 3,
-        })
-    end,
-})
-
--- Вкладка Auto Steal
-local AutoStealTab = Window:CreateTab("🤖 Auto Steal", 4483362458)
-
--- Авто-сбор Brainrot
-local AutoStealToggle = AutoStealTab:CreateToggle({
-    Name = "🔄 Auto Steal Brainrot",
+-- Авто-сбор Brainrot (ИСПРАВЛЕННЫЙ)
+local AutoCollectToggle = AutoFarmTab:CreateToggle({
+    Name = "🔄 Auto Collect Brainrot",
     CurrentValue = false,
-    Flag = "AutoSteal",
+    Flag = "AutoCollect",
     Callback = function(Value)
+        _G.AutoCollect = Value
         if Value then
-            _G.AutoSteal = true
             Rayfield:Notify({
-                Title = "Auto Steal Started",
-                Content = "Automatically stealing all Brainrot...",
+                Title = "Auto Collect Started",
+                Content = "Automatically collecting Brainrot...",
                 Duration = 3,
             })
             
             coroutine.wrap(function()
-                while _G.AutoSteal and LocalPlayer.Character do
-                    local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                while _G.AutoCollect and LocalPlayer.Character do
+                    local character = LocalPlayer.Character
+                    local root = character:FindFirstChild("HumanoidRootPart")
                     if not root then break end
                     
-                    local closestBrainrot = nil
-                    local closestDistance = math.huge
-                    
-                    -- Поиск ближайшего Brainrot
+                    -- Поиск Brainrot
+                    local brainrots = {}
                     for _, item in pairs(workspace:GetDescendants()) do
-                        if (item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin")) then
-                            if item:IsA("Part") or item:IsA("MeshPart") then
-                                local distance = (root.Position - item.Position).Magnitude
-                                if distance < closestDistance then
-                                    closestDistance = distance
-                                    closestBrainrot = item
-                                end
-                            end
+                        if item:IsA("Part") and (item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin") or item.Name:lower():find("money")) then
+                            table.insert(brainrots, item)
                         end
                     end
                     
-                    if closestBrainrot then
-                        -- Плавный полет к Brainrot
-                        local startPos = root.Position
-                        local endPos = closestBrainrot.Position
-                        local direction = (endPos - startPos).Unit
-                        local distance = (endPos - startPos).Magnitude
-                        local travelTime = distance / 50
+                    if #brainrots > 0 then
+                        -- Сортировка по расстоянию
+                        table.sort(brainrots, function(a, b)
+                            return (a.Position - root.Position).Magnitude < (b.Position - root.Position).Magnitude
+                        end)
                         
-                        local startTime = tick()
+                        -- Телепорт к ближайшему
+                        local target = brainrots[1]
+                        root.CFrame = CFrame.new(target.Position + Vector3.new(0, 3, 0))
                         
-                        while tick() - startTime < travelTime and _G.AutoSteal do
-                            if not LocalPlayer.Character then break end
-                            local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                            if not root then break end
-                            
-                            local elapsed = tick() - startTime
-                            local progress = math.min(elapsed / travelTime, 1)
-                            local currentPos = startPos + (endPos - startPos) * progress
-                            root.CFrame = CFrame.new(currentPos)
-                            RunService.Heartbeat:Wait()
-                        end
+                        -- Попытка собрать
+                        firetouchinterest(root, target, 0)
+                        task.wait(0.1)
+                        firetouchinterest(root, target, 1)
                         
-                        if _G.AutoSteal and LocalPlayer.Character then
-                            root.CFrame = CFrame.new(endPos)
-                            task.wait(0.5)
-                        end
                     else
-                        task.wait(1)
+                        Rayfield:Notify({
+                            Title = "No Brainrot Found",
+                            Content = "Searching for more Brainrot...",
+                            Duration = 2,
+                        })
                     end
+                    
+                    task.wait(0.5)
                 end
             end)()
         else
-            _G.AutoSteal = false
+            Rayfield:Notify({
+                Title = "Auto Collect Stopped",
+                Content = "Stopped collecting Brainrot",
+                Duration = 2,
+            })
         end
     end,
 })
 
--- Авто-продажа
-local AutoSellToggle = AutoStealTab:CreateToggle({
+-- Авто-покупка Brainrot (КАК В ИГРЕ)
+local AutoBuyToggle = AutoFarmTab:CreateToggle({
+    Name = "🛒 Auto Buy Brainrot",
+    CurrentValue = false,
+    Flag = "AutoBuy",
+    Callback = function(Value)
+        _G.AutoBuy = Value
+        if Value then
+            Rayfield:Notify({
+                Title = "Auto Buy Started",
+                Content = "Automatically buying Brainrot...",
+                Duration = 3,
+            })
+            
+            coroutine.wrap(function()
+                while _G.AutoBuy do
+                    -- Поиск магазина или NPC для покупки
+                    for _, obj in pairs(workspace:GetDescendants()) do
+                        if obj.Name:lower():find("shop") or obj.Name:lower():find("store") or obj.Name:lower():find("merchant") or obj.Name:lower():find("vendor") then
+                            if LocalPlayer.Character then
+                                local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                                local objRoot = obj:FindFirstChild("HumanoidRootPart") or obj
+                                
+                                if root and objRoot then
+                                    -- Телепорт к магазину
+                                    root.CFrame = objRoot.CFrame + Vector3.new(0, 0, 3)
+                                    
+                                    -- Попытка купить
+                                    local prompt = obj:FindFirstChildOfClass("ProximityPrompt")
+                                    if prompt then
+                                        fireproximityprompt(prompt)
+                                    end
+                                    
+                                    task.wait(1)
+                                end
+                            end
+                        end
+                    end
+                    task.wait(5)
+                end
+            end)()
+        end
+    end,
+})
+
+-- Авто-продажа (ИСПРАВЛЕННАЯ)
+local AutoSellToggle = AutoFarmTab:CreateToggle({
     Name = "💰 Auto Sell Items",
     CurrentValue = false,
     Flag = "AutoSell",
     Callback = function(Value)
+        _G.AutoSell = Value
         if Value then
-            _G.AutoSell = true
             Rayfield:Notify({
                 Title = "Auto Sell Started",
                 Content = "Automatically selling items...",
@@ -302,76 +155,192 @@ local AutoSellToggle = AutoStealTab:CreateToggle({
                     -- Поиск продавца
                     local seller = nil
                     for _, npc in pairs(workspace:GetDescendants()) do
-                        if npc.Name:lower():find("merchant") or npc.Name:lower():find("seller") or npc.Name:lower():find("vendor") then
-                            if npc:IsA("Model") then
-                                seller = npc
-                                break
-                            end
+                        if npc.Name:lower():find("sell") or npc.Name:lower():find("merchant") or npc.Name:lower():find("vendor") then
+                            seller = npc
+                            break
                         end
                     end
                     
                     if seller and LocalPlayer.Character then
                         local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                        local sellerRoot = seller:FindFirstChild("HumanoidRootPart")
+                        local sellerRoot = seller:FindFirstChild("HumanoidRootPart") or seller
                         
-                        if root and sellerRoot then
-                            -- Полет к продавцу
-                            local startPos = root.Position
-                            local endPos = sellerRoot.Position + Vector3.new(0, 0, 3)
-                            local direction = (endPos - startPos).Unit
-                            local distance = (endPos - startPos).Magnitude
-                            local travelTime = distance / 50
+                        if root then
+                            -- Телепорт к продавцу
+                            root.CFrame = sellerRoot.CFrame + Vector3.new(0, 0, 3)
                             
-                            local startTime = tick()
-                            
-                            while tick() - startTime < travelTime and _G.AutoSell do
-                                if not LocalPlayer.Character then break end
-                                local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
-                                if not root then break end
-                                
-                                local elapsed = tick() - startTime
-                                local progress = math.min(elapsed / travelTime, 1)
-                                local currentPos = startPos + (endPos - startPos) * progress
-                                root.CFrame = CFrame.new(currentPos)
-                                RunService.Heartbeat:Wait()
-                            end
-                            
-                            if _G.AutoSell and LocalPlayer.Character then
-                                root.CFrame = CFrame.new(endPos)
-                                
-                                -- Продажа
-                                local prompt = seller:FindFirstChildOfClass("ProximityPrompt")
-                                if prompt then
+                            -- Продажа
+                            local prompt = seller:FindFirstChildOfClass("ProximityPrompt")
+                            if prompt then
+                                for i = 1, 3 do
                                     fireproximityprompt(prompt)
+                                    task.wait(0.5)
                                 end
-                                
-                                task.wait(2)
                             end
                         end
                     end
-                    task.wait(5)
+                    task.wait(10)
                 end
             end)()
-        else
-            _G.AutoSell = false
         end
+    end,
+})
+
+-- Вкладка Teleport
+local TeleportTab = Window:CreateTab("📍 Teleport", 4483353530)
+
+-- Телепорт к базе (КАК В ИГРЕ)
+local BaseTPButton = TeleportTab:CreateButton({
+    Name = "🏠 TP to Your Base",
+    Callback = function()
+        if not LocalPlayer.Character then return end
+        
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        
+        -- Поиск базы игрока
+        local baseFound = false
+        
+        -- Поиск по названиям связанным с базой
+        local baseKeywords = {"base", "spawn", "house", "home", "plot", "island", "area"}
+        
+        for _, keyword in pairs(baseKeywords) do
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj.Name:lower():find(keyword) then
+                    if obj:IsA("Part") or obj:IsA("Model") then
+                        local targetPos = obj:IsA("Part") and obj.Position or (obj:FindFirstChild("HumanoidRootPart") and obj.HumanoidRootPart.Position)
+                        if targetPos then
+                            root.CFrame = CFrame.new(targetPos + Vector3.new(0, 5, 0))
+                            baseFound = true
+                            Rayfield:Notify({
+                                Title = "Teleported to Base",
+                                Content = "Successfully teleported to your base!",
+                                Duration = 3,
+                            })
+                            return
+                        end
+                    end
+                end
+            end
+        end
+        
+        -- Если база не найдена, телепорт в безопасное место
+        if not baseFound then
+            root.CFrame = CFrame.new(0, 100, 0)
+            Rayfield:Notify({
+                Title = "Teleported to Safe Zone",
+                Content = "Base not found, teleported to safe location",
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+-- Телепорт к лучшему месту фарма
+local BestFarmButton = TeleportTab:CreateButton({
+    Name = "💎 TP to Best Farm Spot",
+    Callback = function()
+        if not LocalPlayer.Character then return end
+        
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        
+        -- Поиск области с наибольшим количеством Brainrot
+        local bestArea = nil
+        local maxDensity = 0
+        
+        for _, item in pairs(workspace:GetDescendants()) do
+            if item:IsA("Part") and (item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin")) then
+                local nearbyCount = 0
+                for _, nearby in pairs(workspace:GetDescendants()) do
+                    if nearby:IsA("Part") and (nearby.Name:lower():find("brainrot") or nearby.Name:lower():find("brain") or nearby.Name:lower():find("coin")) then
+                        if (item.Position - nearby.Position).Magnitude < 20 then
+                            nearbyCount = nearbyCount + 1
+                        end
+                    end
+                end
+                
+                if nearbyCount > maxDensity then
+                    maxDensity = nearbyCount
+                    bestArea = item
+                end
+            end
+        end
+        
+        if bestArea then
+            root.CFrame = CFrame.new(bestArea.Position + Vector3.new(0, 5, 0))
+            Rayfield:Notify({
+                Title = "Teleported to Best Spot",
+                Content = string.format("Area with %d Brainrot nearby!", maxDensity),
+                Duration = 3,
+            })
+        else
+            Rayfield:Notify({
+                Title = "No Good Spots Found",
+                Content = "Could not find good farming areas",
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+-- Массовый сбор в радиусе
+local MassCollectButton = TeleportTab:CreateButton({
+    Name = "🌀 Mass Collect in Area",
+    Callback = function()
+        if not LocalPlayer.Character then return end
+        
+        local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+        if not root then return end
+        
+        local collected = 0
+        local radius = 50
+        
+        Rayfield:Notify({
+            Title = "Mass Collection Started",
+            Content = "Collecting all Brainrot in area...",
+            Duration = 2,
+        })
+        
+        for _, item in pairs(workspace:GetDescendants()) do
+            if item:IsA("Part") and (item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin")) then
+                local distance = (root.Position - item.Position).Magnitude
+                if distance <= radius then
+                    root.CFrame = CFrame.new(item.Position + Vector3.new(0, 3, 0))
+                    collected = collected + 1
+                    task.wait(0.1)
+                end
+            end
+        end
+        
+        Rayfield:Notify({
+            Title = "Mass Collection Complete",
+            Content = string.format("Collected %d items!", collected),
+            Duration = 3,
+        })
     end,
 })
 
 -- Вкладка Player
 local PlayerTab = Window:CreateTab("🎮 Player", 4483344167)
 
--- Полёт
+-- Полёт (ИСПРАВЛЕННЫЙ)
 local FlyToggle = PlayerTab:CreateToggle({
     Name = "🕊️ Fly Mode",
     CurrentValue = false,
     Flag = "FlyMode",
     Callback = function(Value)
+        _G.Flying = Value
         if Value then
-            _G.Flying = true
+            Rayfield:Notify({
+                Title = "Fly Mode Enabled",
+                Content = "Use WASD + Space/Ctrl to fly",
+                Duration = 3,
+            })
+            
             local bodyVelocity = Instance.new("BodyVelocity")
             bodyVelocity.Velocity = Vector3.new(0, 0, 0)
-            bodyVelocity.MaxForce = Vector3.new(0, 0, 0)
+            bodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
             
             if LocalPlayer.Character then
                 local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
@@ -380,8 +349,7 @@ local FlyToggle = PlayerTab:CreateToggle({
                 end
             end
             
-            local flyConnection
-            flyConnection = RunService.Heartbeat:Connect(function()
+            _G.FlyConnection = RunService.Heartbeat:Connect(function()
                 if _G.Flying and LocalPlayer.Character then
                     local root = LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                     if root and bodyVelocity then
@@ -407,12 +375,15 @@ local FlyToggle = PlayerTab:CreateToggle({
                             direction = direction - Vector3.new(0, 1, 0)
                         end
                         
-                        bodyVelocity.Velocity = direction.Unit * 100
-                        bodyVelocity.MaxForce = Vector3.new(10000, 10000, 10000)
+                        if direction.Magnitude > 0 then
+                            bodyVelocity.Velocity = direction.Unit * 100
+                        else
+                            bodyVelocity.Velocity = Vector3.new(0, 0, 0)
+                        end
                     end
                 else
-                    if flyConnection then
-                        flyConnection:Disconnect()
+                    if _G.FlyConnection then
+                        _G.FlyConnection:Disconnect()
                     end
                     if bodyVelocity then
                         bodyVelocity:Destroy()
@@ -420,21 +391,22 @@ local FlyToggle = PlayerTab:CreateToggle({
                 end
             end)
         else
-            _G.Flying = false
+            if _G.FlyConnection then
+                _G.FlyConnection:Disconnect()
+            end
         end
     end,
 })
 
--- Noclip
+-- NoClip (ИСПРАВЛЕННЫЙ)
 local NoclipToggle = PlayerTab:CreateToggle({
     Name = "👻 NoClip",
     CurrentValue = false,
     Flag = "NoClip",
     Callback = function(Value)
+        _G.NoClip = Value
         if Value then
-            _G.NoClip = true
-            local noclipConnection
-            noclipConnection = RunService.Stepped:Connect(function()
+            _G.NoclipConnection = RunService.Stepped:Connect(function()
                 if _G.NoClip and LocalPlayer.Character then
                     for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
                         if part:IsA("BasePart") then
@@ -442,13 +414,33 @@ local NoclipToggle = PlayerTab:CreateToggle({
                         end
                     end
                 else
-                    if noclipConnection then
-                        noclipConnection:Disconnect()
+                    if _G.NoclipConnection then
+                        _G.NoclipConnection:Disconnect()
                     end
                 end
             end)
         else
-            _G.NoClip = false
+            if _G.NoclipConnection then
+                _G.NoclipConnection:Disconnect()
+            end
+        end
+    end,
+})
+
+-- Speed
+local SpeedSlider = PlayerTab:CreateSlider({
+    Name = "💨 Walk Speed",
+    Range = {16, 200},
+    Increment = 5,
+    Suffix = "studs",
+    CurrentValue = 16,
+    Flag = "WalkSpeed",
+    Callback = function(Value)
+        if LocalPlayer.Character then
+            local humanoid = LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+            if humanoid then
+                humanoid.WalkSpeed = Value
+            end
         end
     end,
 })
@@ -456,21 +448,27 @@ local NoclipToggle = PlayerTab:CreateToggle({
 -- Вкладка Visuals
 local VisualsTab = Window:CreateTab("👁️ Visuals", 4483345990)
 
--- ESP для Brainrot
-local BrainrotESPToggle = VisualsTab:CreateToggle({
+-- ESP для Brainrot (ИСПРАВЛЕННЫЙ)
+local ESPToggle = VisualsTab:CreateToggle({
     Name = "🧠 Brainrot ESP",
     CurrentValue = false,
     Flag = "BrainrotESP",
     Callback = function(Value)
+        _G.BrainrotESP = Value
         if Value then
-            _G.BrainrotESP = true
+            Rayfield:Notify({
+                Title = "Brainrot ESP Enabled",
+                Content = "Highlighting all Brainrot items",
+                Duration = 3,
+            })
+            
             coroutine.wrap(function()
                 while _G.BrainrotESP do
                     for _, item in pairs(workspace:GetDescendants()) do
-                        if (item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin")) then
-                            if item:IsA("Part") and not item:FindFirstChild("BrainrotHighlight") then
+                        if item:IsA("Part") and (item.Name:lower():find("brainrot") or item.Name:lower():find("brain") or item.Name:lower():find("coin")) then
+                            if not item:FindFirstChild("BrainrotESP") then
                                 local highlight = Instance.new("Highlight")
-                                highlight.Name = "BrainrotHighlight"
+                                highlight.Name = "BrainrotESP"
                                 highlight.Parent = item
                                 highlight.FillColor = Color3.fromRGB(0, 255, 0)
                                 highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
@@ -480,14 +478,82 @@ local BrainrotESPToggle = VisualsTab:CreateToggle({
                     end
                     task.wait(2)
                 end
+                
+                -- Очистка при выключении
+                for _, item in pairs(workspace:GetDescendants()) do
+                    local highlight = item:FindFirstChild("BrainrotESP")
+                    if highlight then
+                        highlight:Destroy()
+                    end
+                end
             end)()
         else
-            _G.BrainrotESP = false
-            for _, item in pairs(workspace:GetDescendants()) do
-                local highlight = item:FindFirstChild("BrainrotHighlight")
-                if highlight then
-                    highlight:Destroy()
-                end
+            Rayfield:Notify({
+                Title = "Brainrot ESP Disabled",
+                Content = "ESP turned off",
+                Duration = 2,
+            })
+        end
+    end,
+})
+
+-- Fullbright
+local FullbrightToggle = VisualsTab:CreateToggle({
+    Name = "💡 Fullbright",
+    CurrentValue = false,
+    Flag = "Fullbright",
+    Callback = function(Value)
+        if Value then
+            Lighting.Ambient = Color3.new(1, 1, 1)
+            Lighting.Brightness = 2
+            Lighting.GlobalShadows = false
+        else
+            Lighting.Ambient = Color3.new(0, 0, 0)
+            Lighting.Brightness = 1
+            Lighting.GlobalShadows = true
+        end
+    end,
+})
+
+-- Вкладка Misc
+local MiscTab = Window:CreateTab("⚙️ Misc", 4483344167)
+
+-- Anti AFK
+local AntiAFKToggle = MiscTab:CreateToggle({
+    Name = "⏰ Anti AFK",
+    CurrentValue = false,
+    Flag = "AntiAFK",
+    Callback = function(Value)
+        if Value then
+            LocalPlayer.Idled:Connect(function()
+                game:GetService("VirtualUser"):Button2Down(Vector3.new(0,0,0))
+                wait(1)
+                game:GetService("VirtualUser"):Button2Up(Vector3.new(0,0,0))
+            end)
+            Rayfield:Notify({
+                Title = "Anti AFK Enabled",
+                Content = "You won't be kicked for AFK",
+                Duration = 3,
+            })
+        end
+    end,
+})
+
+-- Server Hop
+local ServerHopButton = MiscTab:CreateButton({
+    Name = "🔄 Server Hop",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "Server Hop",
+            Content = "Searching for new server...",
+            Duration = 3,
+        })
+        
+        local servers = game:GetService("HttpService"):JSONDecode(game:HttpGet("https://games.roblox.com/v1/games/" .. game.PlaceId .. "/servers/Public?sortOrder=Desc&limit=100"))
+        for _, server in pairs(servers.data) do
+            if server.playing < server.maxPlayers and server.id ~= game.JobId then
+                TeleportService:TeleportToPlaceInstance(game.PlaceId, server.id)
+                break
             end
         end
     end,
@@ -495,9 +561,9 @@ local BrainrotESPToggle = VisualsTab:CreateToggle({
 
 -- Уведомление о загрузке
 Rayfield:Notify({
-    Title = "🧠 Ultimate Brainrot Stealer Loaded!",
-    Content = "Ready to dominate the game!",
+    Title = "🧠 ULTIMATE BRAINROT STEALER LOADED!",
+    Content = "All features are ready! Use wisely!",
     Duration = 6,
 })
 
-print("Brainrot Stealer successfully loaded!")
+print("Ultimate Brainrot Stealer successfully loaded!")
