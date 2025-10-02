@@ -1,297 +1,221 @@
--- Plants vs Brainrots Cheat Menu
--- Rayfield Interface Script
+-- Plants vs Brainrots AFK Farm Script
+local Players = game:GetService("Players")
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+local RunService = game:GetService("RunService")
+local VirtualInputManager = game:GetService("VirtualInputManager")
 
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
-local Window = Rayfield:CreateWindow({
-   Name = "🌿 Plants vs Brainrots 🧠 | Cheat Menu",
-   LoadingTitle = "Plants vs Brainrots Cheat",
-   LoadingSubtitle = "by TurboModder && t.me/TurboHackMods",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "BrainrotsCheat",
-      FileName = "Config"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
-   KeySystem = false,
-})
+-- GUI Library
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
+local Window = Library.CreateLib("Plants vs Brainrots AFK Farm", "DarkTheme")
 
--- Основная вкладка
-local MainTab = Window:CreateTab("Основные функции", "rbxassetid://4483345998")
-local FarmTab = Window:CreateTab("Авто-ферма", "rbxassetid://4483345998")
-local PlayerTab = Window:CreateTab("Игрок", "rbxassetid://4483345998")
-local TeleportTab = Window:CreateTab("Телепорты", "rbxassetid://4483345998")
+-- Variables
+local AutoBuyEnabled = false
+local AntiAFKEnabled = true
+local MultiplierEnabled = false
+local CurrentMultiplier = 1
+local AutoPlantEnabled = false
 
--- Уведомление при запуске
-Rayfield:Notify({
-   Title = "Cheat Menu Activated",
-   Content = "Plants vs Brainrots cheat loaded successfully!",
-   Duration = 6.5,
-   Image = "check-circle",
-})
+-- Main Tab
+local MainTab = Window:NewTab("Main")
+local MainSection = MainTab:NewSection("Auto Farm Features")
 
--- Основные функции
-local MainSection = MainTab:CreateSection("Основные функции")
+MainSection:NewToggle("Auto Buy All Plants", "Automatically buys all plants in stock", function(state)
+    AutoBuyEnabled = state
+    if state then
+        spawn(function()
+            while AutoBuyEnabled do
+                AutoBuyPlants()
+                wait(5)
+            end
+        end)
+    end
+end)
 
--- Авто-ферминг
-local AutoFarmToggle = MainTab:CreateToggle({
-   Name = "Авто-ферминг денег",
-   CurrentValue = false,
-   Flag = "AutoFarm",
-   Callback = function(Value)
-       _G.AutoFarm = Value
-       if Value then
-           Rayfield:Notify({
-              Title = "Авто-ферминг",
-              Content = "Автоматический сбор денег активирован!",
-              Duration = 3,
-              Image = "dollar-sign",
-           })
-       end
-       
-       while _G.AutoFarm do
-           task.wait(1)
-           -- Твой код авто-ферминга здесь
-       end
-   end,
-})
+MainSection:NewToggle("Anti AFK", "Prevents you from being kicked for AFK", function(state)
+    AntiAFKEnabled = state
+end)
 
--- Авто-победа над врагами
-local AutoWinToggle = MainTab:CreateToggle({
-   Name = "Авто-победа над бреинротами",
-   CurrentValue = false,
-   Flag = "AutoWin",
-   Callback = function(Value)
-       _G.AutoWin = Value
-       if Value then
-           Rayfield:Notify({
-              Title = "Авто-победа",
-              Content = "Автоматическая победа над врагами активирована!",
-              Duration = 3,
-              Image = "sword",
-           })
-       end
-   end,
-})
+MainSection:NewToggle("Club Multiplier", "Multiplies your club damage", function(state)
+    MultiplierEnabled = state
+    if state then
+        EnableClubMultiplier()
+    end
+end)
 
--- Бессмертие
-local GodModeToggle = MainTab:CreateToggle({
-   Name = "Бессмертие",
-   CurrentValue = false,
-   Flag = "GodMode",
-   Callback = function(Value)
-       _G.GodMode = Value
-       if Value then
-           -- Код бессмертия
-       end
-   end,
-})
+MainSection:NewSlider("Multiplier Value", "Set club multiplier value", 100, 1, function(value)
+    CurrentMultiplier = value
+end)
 
--- Раздел улучшений растений
-local PlantSection = MainTab:CreateSection("Улучшения растений")
+MainSection:NewToggle("Auto Plant", "Automatically plants in empty spots", function(state)
+    AutoPlantEnabled = state
+    if state then
+        spawn(function()
+            while AutoPlantEnabled do
+                AutoPlant()
+                wait(3)
+            end
+        end)
+    end
+end)
 
--- Множитель урона растений
-local DamageMultiplier = MainTab:CreateSlider({
-   Name = "Множитель урона растений",
-   Range = {1, 10},
-   Increment = 0.5,
-   Suffix = "x",
-   CurrentValue = 1,
-   Flag = "DamageMulti",
-   Callback = function(Value)
-       _G.DamageMultiplier = Value
-   end,
-})
+-- Stats Tab
+local StatsTab = Window:NewTab("Stats")
+local StatsSection = StatsTab:NewSection("Player Statistics")
 
--- Скорость атаки растений
-local AttackSpeed = MainTab:CreateSlider({
-   Name = "Скорость атаки растений",
-   Range = {0.1, 5},
-   Increment = 0.1,
-   Suffix = "x",
-   CurrentValue = 1,
-   Flag = "AttackSpeed",
-   Callback = function(Value)
-       _G.AttackSpeed = Value
-   end,
-})
+StatsSection:NewButton("Refresh Stats", "Update player statistics", function()
+    UpdateStats()
+end)
 
--- Вкладка авто-фермы
-local FarmSection = FarmTab:CreateSection("Настройки фермы")
+-- Misc Tab
+local MiscTab = Window:NewTab("Misc")
+local MiscSection = MiscTab:NewSection("Additional Features")
 
--- Авто-посадка растений
-local AutoPlantToggle = FarmTab:CreateToggle({
-   Name = "Авто-посадка растений",
-   CurrentValue = false,
-   Flag = "AutoPlant",
-   Callback = function(Value)
-       _G.AutoPlant = Value
-   end,
-})
+MiscSection:NewButton("Collect All Coins", "Collect all coins on the map", function()
+    CollectCoins()
+end)
 
--- Авто-сбор ресурсов
-local AutoCollectToggle = FarmTab:CreateToggle({
-   Name = "Авто-сбор ресурсов",
-   CurrentValue = false,
-   Flag = "AutoCollect",
-   Callback = function(Value)
-       _G.AutoCollect = Value
-   end,
-})
+MiscSection:NewButton("Upgrade All Plants", "Upgrade all planted plants", function()
+    UpgradeAllPlants()
+end)
 
--- Интервал сбора
-local CollectInterval = FarmTab:CreateSlider({
-   Name = "Интервал сбора (сек)",
-   Range = {1, 60},
-   Increment = 1,
-   Suffix = "сек",
-   CurrentValue = 5,
-   Flag = "CollectInterval",
-   Callback = function(Value)
-       _G.CollectInterval = Value
-   end,
-})
+MiscSection:NewKeybind("Toggle Menu", "Toggle the menu visibility", Enum.KeyCode.RightControl, function()
+	Library:ToggleUI()
+end)
 
--- Вкладка игрока
-local PlayerSection = PlayerTab:CreateSection("Настройки игрока")
-
--- Скорость игрока
-local WalkSpeed = PlayerTab:CreateSlider({
-   Name = "Скорость передвижения",
-   Range = {16, 200},
-   Increment = 5,
-   Suffix = "studs",
-   CurrentValue = 16,
-   Flag = "WalkSpeed",
-   Callback = function(Value)
-       game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
-   end,
-})
-
--- Сила прыжка
-local JumpPower = PlayerTab:CreateSlider({
-   Name = "Сила прыжка",
-   Range = {50, 200},
-   Increment = 5,
-   Suffix = "power",
-   CurrentValue = 50,
-   Flag = "JumpPower",
-   Callback = function(Value)
-       game.Players.LocalPlayer.Character.Humanoid.JumpPower = Value
-   end,
-})
-
--- Ночное зрение
-local NightVision = PlayerTab:CreateToggle({
-   Name = "Ночное зрение",
-   CurrentValue = false,
-   Flag = "NightVision",
-   Callback = function(Value)
-       _G.NightVision = Value
-   end,
-})
-
--- Раздел телепортов
-local TeleportSection = TeleportTab:CreateSection("Локации телепортации")
-
--- Быстрые телепорты
-local Locations = {
-   ["Стартовая зона"] = CFrame.new(0, 10, 0),
-   ["Центр карты"] = CFrame.new(100, 20, 100),
-   ["Секретная зона"] = CFrame.new(-200, 50, -200),
-}
-
-for name, position in pairs(Locations) do
-   local TeleportButton = TeleportTab:CreateButton({
-      Name = "Телепорт: " .. name,
-      Callback = function()
-          game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = position
-          Rayfield:Notify({
-             Title = "Телепортация",
-             Content = "Телепортирован в " .. name,
-             Duration = 3,
-             Image = "map-pin",
-          })
-      end,
-   })
+-- Auto Buy Function
+function AutoBuyPlants()
+    if not AutoBuyEnabled then return end
+    
+    -- Look for plant shops or vending machines
+    local shops = workspace:FindFirstChild("Shops") or workspace:FindFirstChild("VendingMachines")
+    if shops then
+        for _, shop in pairs(shops:GetChildren()) do
+            if shop:FindFirstChild("ClickDetector") then
+                fireclickdetector(shop.ClickDetector)
+                wait(0.5)
+            end
+        end
+    end
+    
+    -- Alternative method: look for buy buttons in GUI
+    local playerGui = Player:FindFirstChild("PlayerGui")
+    if playerGui then
+        for _, gui in pairs(playerGui:GetDescendants()) do
+            if gui:IsA("TextButton") and (string.find(string.lower(gui.Text), "buy") or string.find(string.lower(gui.Text), "purchase")) then
+                gui:FireServer("Activated")
+                wait(0.2)
+            end
+        end
+    end
 end
 
--- Раздел промокодов [citation:2]
-local CodesSection = MainTab:CreateSection("Промокоды")
-
--- Авто-ввод промокодов
-local AutoRedeemToggle = MainTab:CreateToggle({
-   Name = "Авто-ввод промокодов",
-   CurrentValue = false,
-   Flag = "AutoRedeem",
-   Callback = function(Value)
-       _G.AutoRedeem = Value
-       if Value then
-           RedeemAllCodes()
-       end
-   end,
-})
-
--- Кнопка ввода всех кодов
-local RedeemButton = MainTab:CreateButton({
-   Name = "Ввести все промокоды",
-   Callback = function()
-       RedeemAllCodes()
-   end,
-})
-
--- Функция для ввода промокодов [citation:2]
-function RedeemAllCodes()
-   local Codes = {"BASED", "FROZEN", "STACKS"}
-   
-   Rayfield:Notify({
-      Title = "Промокоды",
-      Content = "Начинаю ввод промокодов...",
-      Duration = 3,
-      Image = "gift",
-   })
-   
-   for _, code in pairs(Codes) do
-       -- Твой код для ввода промокодов здесь
-       task.wait(1)
-   end
+-- Club Multiplier Function
+function EnableClubMultiplier()
+    spawn(function()
+        while MultiplierEnabled do
+            -- Method 1: Modify local damage values
+            local character = Player.Character
+            if character then
+                local tool = character:FindFirstChildOfClass("Tool")
+                if tool and tool:FindFirstChild("Damage") then
+                    tool.Damage.Value = tool.Damage.Value * CurrentMultiplier
+                end
+            end
+            
+            -- Method 2: Use remote events for damage multiplication
+            local remotes = game:GetService("ReplicatedStorage"):FindFirstChild("Remotes")
+            if remotes then
+                for _, remote in pairs(remotes:GetDescendants()) do
+                    if remote:IsA("RemoteEvent") and (string.find(string.lower(remote.Name), "damage") or string.find(string.lower(remote.Name), "hit")) then
+                        -- Intercept damage calls
+                        local oldFireServer = remote.FireServer
+                        remote.FireServer = function(self, ...)
+                            local args = {...}
+                            if type(args[1]) == "number" then
+                                args[1] = args[1] * CurrentMultiplier
+                            end
+                            return oldFireServer(self, unpack(args))
+                        end
+                    end
+                end
+            end
+            wait(1)
+        end
+    end)
 end
 
--- Раздел визуальных настроек
-local VisualSection = MainTab:CreateSection("Визуальные настройки")
+-- Auto Plant Function
+function AutoPlant()
+    if not AutoPlantEnabled then return end
+    
+    -- Look for empty planting spots
+    local garden = workspace:FindFirstChild("Garden") or workspace:FindFirstChild("PlantingSpots")
+    if garden then
+        for _, spot in pairs(garden:GetChildren()) do
+            if spot:FindFirstChild("ClickDetector") and #spot:GetChildren() <= 2 then -- Assuming empty spot has few children
+                fireclickdetector(spot.ClickDetector)
+                wait(0.3)
+            end
+        end
+    end
+end
 
--- Цвет интерфейса
-local InterfaceColor = MainTab:CreateColorPicker({
-   Name = "Цвет интерфейса",
-   Color = Color3.fromRGB(0, 255, 0),
-   Flag = "InterfaceColor",
-   Callback = function(Value)
-       Window:ChangeColor(Value)
-   end
-})
+-- Collect Coins Function
+function CollectCoins()
+    local coins = workspace:FindFirstChild("Coins") or workspace:FindFirstChild("Currency")
+    if coins then
+        for _, coin in pairs(coins:GetDescendants()) do
+            if coin:IsA("Part") and coin:FindFirstChild("ClickDetector") then
+                fireclickdetector(coin.ClickDetector)
+            end
+        end
+    end
+end
 
--- Хоткеи
-local KeybindsSection = MainTab:CreateSection("Горячие клавиши")
+-- Upgrade All Plants Function
+function UpgradeAllPlants()
+    local playerGui = Player.PlayerGui
+    if playerGui then
+        for _, gui in pairs(playerGui:GetDescendants()) do
+            if gui:IsA("TextButton") and (string.find(string.lower(gui.Text), "upgrade") or string.find(string.lower(gui.Text), "level")) then
+                gui:FireServer("Activated")
+                wait(0.2)
+            end
+        end
+    end
+end
 
--- Быстрое меню
-local QuickMenuToggle = MainTab:CreateToggle({
-   Name = "Быстрое меню (F9)",
-   CurrentValue = false,
-   Flag = "QuickMenu",
-   Callback = function(Value)
-       _G.QuickMenu = Value
-   end,
-})
+-- Update Stats Function
+function UpdateStats()
+    -- This would need to be customized based on the game's stat system
+    print("Stats refreshed - Customize this function based on game structure")
+end
 
--- Информация о скрипте
-Rayfield:Notify({
-   Title = "Успешная загрузка",
-   Content = "Plants vs Brainrots Cheat Menu активирован!\nИспользуй меню для активации функций.",
-   Duration = 8,
-   Image = "zap",
-})
+-- Anti AFK System
+spawn(function()
+    while true do
+        if AntiAFKEnabled then
+            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.W, false, game)
+            wait(0.1)
+            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.W, false, game)
+            wait(0.1)
+            VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.S, false, game)
+            wait(0.1)
+            VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.S, false, game)
+        end
+        wait(30) -- Move every 30 seconds
+    end
+end)
 
-print("Plants vs Brainrots Cheat Menu loaded successfully!")
+-- Auto Reconnect if Disconnected
+game:GetService("Players").PlayerRemoving:Connect(function(player)
+    if player == Player then
+        -- Attempt to rejoin
+        game:GetService("TeleportService"):Teleport(game.PlaceId, Player)
+    end
+end)
+
+-- Initialization
+print("by cheat t.me/TurboHackMods Plants vs Brainrots AFK Farm loaded!")
+print("Features: Auto Buy Plants, Anti AFK, Club Multiplier, Auto Plant, and more!")
