@@ -1,10 +1,10 @@
 -- Plants vs Brainrots Cheat Menu
--- No Key System
+-- No Key System - English Version
 
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "🌿 Plants vs Brainrots 🧠 | FREE",
+   Name = "🌿 Plants vs Brainrots 🧠 | FREE CHEAT",
    LoadingTitle = "Loading Cheat Menu...",
    LoadingSubtitle = "by Sirius",
    ConfigurationSaving = {
@@ -21,32 +21,32 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- Tabs
-local MainTab = Window:CreateTab("Главная", "rbxassetid://4483345998")
-local PlantsTab = Window:CreateTab("Растения", "rbxassetid://7733674079")
-local PlayerTab = Window:CreateTab("Игрок", "rbxassetid://7733661389")
-local TeleportTab = Window:CreateTab("Телепорты", "rbxassetid://7733682953")
+local MainTab = Window:CreateTab("Main", "rbxassetid://4483345998")
+local PlantsTab = Window:CreateTab("Plants", "rbxassetid://7733674079")
+local PlayerTab = Window:CreateTab("Player", "rbxassetid://7733661389")
+local TeleportTab = Window:CreateTab("Teleports", "rbxassetid://7733682953")
 
 -- Notify
 Rayfield:Notify({
-   Title = "Меню загружено!",
-   Content = "Все функции разблокированы!",
+   Title = "Menu Loaded!",
+   Content = "All features unlocked!",
    Duration = 6.5,
    Image = "check-circle",
 })
 
 -- Main Tab
-local MainSection = MainTab:CreateSection("Основные функции")
+local MainSection = MainTab:CreateSection("Main Features")
 
 local AutoFarm = MainTab:CreateToggle({
-   Name = "💰 Авто-ферминг денег",
+   Name = "💰 Auto Farm Money",
    CurrentValue = false,
    Flag = "AutoFarm",
    Callback = function(Value)
        getgenv().AutoFarm = Value
        if Value then
            Rayfield:Notify({
-              Title = "Авто-ферминг",
-              Content = "Включен авто-сбор денег!",
+              Title = "Auto Farm",
+              Content = "Auto money farming enabled!",
               Duration = 3,
               Image = "dollar-sign",
            })
@@ -69,15 +69,15 @@ local AutoFarm = MainTab:CreateToggle({
 })
 
 local AutoWin = MainTab:CreateToggle({
-   Name = "⚔️ Авто-убийство врагов",
+   Name = "⚔️ Auto Kill Enemies",
    CurrentValue = false,
    Flag = "AutoWin",
    Callback = function(Value)
        getgenv().AutoWin = Value
        if Value then
            Rayfield:Notify({
-              Title = "Авто-убийство",
-              Content = "Включено авто-убийство врагов!",
+              Title = "Auto Kill",
+              Content = "Auto enemy kill enabled!",
               Duration = 3,
               Image = "sword",
            })
@@ -99,7 +99,7 @@ local AutoWin = MainTab:CreateToggle({
 })
 
 local GodMode = MainTab:CreateToggle({
-   Name = "🛡️ Бессмертие",
+   Name = "🛡️ God Mode",
    CurrentValue = false,
    Flag = "GodMode",
    Callback = function(Value)
@@ -113,8 +113,8 @@ local GodMode = MainTab:CreateToggle({
                end
            end
            Rayfield:Notify({
-              Title = "Бессмертие",
-              Content = "Режим бессмертия включен!",
+              Title = "God Mode",
+              Content = "God mode enabled!",
               Duration = 3,
               Image = "shield",
            })
@@ -131,15 +131,15 @@ local GodMode = MainTab:CreateToggle({
 })
 
 local Noclip = MainTab:CreateToggle({
-   Name = "🚀 Ноклип",
+   Name = "🚀 Noclip",
    CurrentValue = false,
    Flag = "Noclip",
    Callback = function(Value)
        getgenv().Noclip = Value
        if Value then
            Rayfield:Notify({
-              Title = "Ноклип",
-              Content = "Режим ноклипа включен!",
+              Title = "Noclip",
+              Content = "Noclip mode enabled!",
               Duration = 3,
               Image = "zap",
            })
@@ -161,10 +161,10 @@ local Noclip = MainTab:CreateToggle({
 })
 
 -- Plants Tab
-local PlantsSection = PlantsTab:CreateSection("Улучшения растений")
+local PlantsSection = PlantsTab:CreateSection("Plants Upgrade")
 
 local DamageMulti = PlantsTab:CreateSlider({
-   Name = "Множитель урона",
+   Name = "Damage Multiplier",
    Range = {1, 10},
    Increment = 0.5,
    Suffix = "x",
@@ -176,7 +176,7 @@ local DamageMulti = PlantsTab:CreateSlider({
 })
 
 local AttackSpeed = PlantsTab:CreateSlider({
-   Name = "Скорость атаки",
+   Name = "Attack Speed",
    Range = {0.1, 5},
    Increment = 0.1,
    Suffix = "x",
@@ -188,7 +188,7 @@ local AttackSpeed = PlantsTab:CreateSlider({
 })
 
 local InstantPlant = PlantsTab:CreateToggle({
-   Name = "⚡ Мгновенная посадка",
+   Name = "⚡ Instant Plant",
    CurrentValue = false,
    Flag = "InstantPlant",
    Callback = function(Value)
@@ -197,10 +197,10 @@ local InstantPlant = PlantsTab:CreateToggle({
 })
 
 -- Player Tab
-local PlayerSection = PlayerTab:CreateSection("Настройки игрока")
+local PlayerSection = PlayerTab:CreateSection("Player Settings")
 
 local WalkSpeed = PlayerTab:CreateSlider({
-   Name = "Скорость ходьбы",
+   Name = "Walk Speed",
    Range = {16, 200},
    Increment = 5,
    Suffix = "studs",
@@ -212,7 +212,7 @@ local WalkSpeed = PlayerTab:CreateSlider({
 })
 
 local JumpPower = PlayerTab:CreateSlider({
-   Name = "Сила прыжка",
+   Name = "Jump Power",
    Range = {50, 200},
    Increment = 5,
    Suffix = "power",
@@ -224,7 +224,7 @@ local JumpPower = PlayerTab:CreateSlider({
 })
 
 local InfJump = PlayerTab:CreateToggle({
-   Name = "🦘 Бесконечный прыжок",
+   Name = "🦘 Infinite Jump",
    CurrentValue = false,
    Flag = "InfJump",
    Callback = function(Value)
@@ -240,19 +240,19 @@ local InfJump = PlayerTab:CreateToggle({
 })
 
 -- Teleport Tab
-local TeleportSection = TeleportTab:CreateSection("Телепорты")
+local TeleportSection = TeleportTab:CreateSection("Teleports")
 
 local Locations = {
-   ["🏠 Старт"] = CFrame.new(0, 10, 0),
-   ["🎯 Центр"] = CFrame.new(100, 20, 100),
-   ["🌿 Ферма"] = CFrame.new(50, 15, -150),
-   ["🧠 Враги"] = CFrame.new(-100, 25, 200),
-   ["💎 Секрет"] = CFrame.new(-200, 50, -200),
+   ["🏠 Spawn"] = CFrame.new(0, 10, 0),
+   ["🎯 Center"] = CFrame.new(100, 20, 100),
+   ["🌿 Farm"] = CFrame.new(50, 15, -150),
+   ["🧠 Enemies"] = CFrame.new(-100, 25, 200),
+   ["💎 Secret"] = CFrame.new(-200, 50, -200),
 }
 
 for name, pos in pairs(Locations) do
    TeleportTab:CreateButton({
-      Name = "ТП: " .. name,
+      Name = "TP: " .. name,
       Callback = function()
           local char = game.Players.LocalPlayer.Character
           if char then
@@ -260,8 +260,8 @@ for name, pos in pairs(Locations) do
               if hrp then
                   hrp.CFrame = pos
                   Rayfield:Notify({
-                     Title = "Телепорт",
-                     Content = "Телепортирован в " .. name,
+                     Title = "Teleport",
+                     Content = "Teleported to " .. name,
                      Duration = 3,
                      Image = "map-pin",
                   })
@@ -272,14 +272,14 @@ for name, pos in pairs(Locations) do
 end
 
 -- Buttons Section
-local ButtonsSection = MainTab:CreateSection("Быстрые действия")
+local ButtonsSection = MainTab:CreateSection("Quick Actions")
 
 MainTab:CreateButton({
-   Name = "💸 Собрать все деньги",
+   Name = "💸 Collect All Money",
    Callback = function()
        Rayfield:Notify({
-          Title = "Сбор денег",
-          Content = "Собираю все деньги...",
+          Title = "Money Collect",
+          Content = "Collecting all money...",
           Duration = 3,
           Image = "dollar-sign",
        })
@@ -296,11 +296,11 @@ MainTab:CreateButton({
 })
 
 MainTab:CreateButton({
-   Name = "💀 Убить всех врагов",
+   Name = "💀 Kill All Enemies",
    Callback = function()
        Rayfield:Notify({
-          Title = "Убийство",
-          Content = "Убиваю всех врагов...",
+          Title = "Kill Enemies",
+          Content = "Killing all enemies...",
           Duration = 3,
           Image = "skull",
        })
@@ -315,10 +315,17 @@ MainTab:CreateButton({
    end,
 })
 
+MainTab:CreateButton({
+   Name = "🌟 Fly Mode",
+   Callback = function()
+       loadstring(game:HttpGet("https://raw.githubusercontent.com/XNEOFF/FlyGui/main/FlyGui.lua"))()
+   end,
+})
+
 -- Final notify
 Rayfield:Notify({
-   Title = "Готово!",
-   Content = "Меню полностью загружено!\nНаслаждайся читами!",
+   Title = "Ready!",
+   Content = "Menu fully loaded!\nEnjoy cheating!",
    Duration = 8,
    Image = "zap",
 })
