@@ -1,36 +1,7 @@
--- Plants vs Brainrots - Rayfield Menu WITHOUT EMOJI
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- Plants vs Brainrots - Working Kavo UI Menu
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua'))()
 
-local Window = Rayfield:CreateWindow({
-   Name = "PLANTS vs BRAINROTS | RAYFIELD",
-   LoadingTitle = "Plants vs Brainrots Ultimate",
-   LoadingSubtitle = "Loading Interface...",
-   ConfigurationSaving = {
-      Enabled = true,
-      FolderName = "PvBRayfield",
-      FileName = "Settings"
-   },
-   Discord = {
-      Enabled = false,
-      Invite = "noinvitelink",
-      RememberJoins = true
-   },
-   KeySystem = false
-})
-
--- Табы
-local MainTab = Window:CreateTab("Main")
-local FarmSection = MainTab:CreateSection("Auto Farm")
-local CombatSection = MainTab:CreateSection("Combat")
-
-local PlayerTab = Window:CreateTab("Player")
-local MovementSection = PlayerTab:CreateSection("Movement")
-
-local TeleportTab = Window:CreateTab("Teleport")
-local LocationSection = TeleportTab:CreateSection("Locations")
-
-local SettingsTab = Window:CreateTab("Settings")
-local ConfigSection = SettingsTab:CreateSection("Configuration")
+local Window = Library.CreateLib("PLANTS vs BRAINROTS", "DarkTheme")
 
 -- Переменные
 local AutoBuy = false
@@ -46,29 +17,15 @@ local MultiplierValue = 10
 local WalkSpeed = 50
 local JumpPower = 50
 
--- ФУНКЦИИ АВТО-ФАРМА
+-- Функции
 function BuyAllPlants()
     spawn(function()
         while AutoBuy do
-            -- Поиск магазинов
             for _, obj in pairs(workspace:GetDescendants()) do
                 if obj:IsA("Model") and (string.find(obj.Name:lower(), "shop") or string.find(obj.Name:lower(), "vendor")) then
                     if obj:FindFirstChild("ClickDetector") then
                         fireclickdetector(obj.ClickDetector)
                         wait(0.2)
-                    end
-                end
-            end
-            
-            -- Поиск кнопок в GUI
-            local playerGui = game.Players.LocalPlayer:FindFirstChild("PlayerGui")
-            if playerGui then
-                for _, gui in pairs(playerGui:GetDescendants()) do
-                    if gui:IsA("TextButton") and (string.find(gui.Text:lower(), "buy") or string.find(gui.Text:lower(), "purchase")) then
-                        pcall(function()
-                            gui:FireServer("Activated")
-                        end)
-                        wait(0.1)
                     end
                 end
             end
@@ -80,9 +37,8 @@ end
 function PlantAllSeeds()
     spawn(function()
         while AutoPlant do
-            -- Поиск мест для посадки
             for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("Part") and (string.find(obj.Name:lower(), "plot") or string.find(obj.Name:lower(), "soil") or string.find(obj.Name:lower(), "garden")) then
+                if obj:IsA("Part") and (string.find(obj.Name:lower(), "plot") or string.find(obj.Name:lower(), "soil")) then
                     if obj:FindFirstChild("ClickDetector") then
                         fireclickdetector(obj.ClickDetector)
                         wait(0.1)
@@ -97,9 +53,8 @@ end
 function CollectAllCoins()
     spawn(function()
         while AutoCollect do
-            -- Сбор ресурсов
             for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("Part") and (string.find(obj.Name:lower(), "coin") or string.find(obj.Name:lower(), "money") or string.find(obj.Name:lower(), "reward")) then
+                if obj:IsA("Part") and (string.find(obj.Name:lower(), "coin") or string.find(obj.Name:lower(), "money")) then
                     if obj:FindFirstChild("ClickDetector") then
                         fireclickdetector(obj.ClickDetector)
                     end
@@ -110,11 +65,9 @@ function CollectAllCoins()
     end)
 end
 
--- ФУНКЦИИ БОЯ
 function ApplyDamageMultiplier()
     spawn(function()
         while DamageMultiplier do
-            -- Умножение урона
             local character = game.Players.LocalPlayer.Character
             if character then
                 for _, tool in pairs(character:GetChildren()) do
@@ -131,8 +84,54 @@ function ApplyDamageMultiplier()
     end)
 end
 
-function ApplyGodMode()
-    spawn(function()
+-- Табы
+local MainTab = Window:NewTab("Main")
+local FarmSection = MainTab:NewSection("Auto Farm")
+local CombatSection = MainTab:NewSection("Combat")
+
+local PlayerTab = Window:NewTab("Player")
+local MovementSection = PlayerTab:NewSection("Movement")
+
+local SettingsTab = Window:NewTab("Settings")
+local ConfigSection = SettingsTab:NewSection("Configuration")
+
+-- Кнопки Auto Farm
+FarmSection:NewToggle("Auto Buy Plants", "Automatically buy plants", function(state)
+    AutoBuy = state
+    if state then
+        BuyAllPlants()
+    end
+end)
+
+FarmSection:NewToggle("Auto Plant Seeds", "Automatically plant seeds", function(state)
+    AutoPlant = state
+    if state then
+        PlantAllSeeds()
+    end
+end)
+
+FarmSection:NewToggle("Auto Collect Coins", "Automatically collect coins", function(state)
+    AutoCollect = state
+    if state then
+        CollectAllCoins()
+    end
+end)
+
+-- Кнопки Combat
+CombatSection:NewToggle("Damage Multiplier", "Multiply weapon damage", function(state)
+    DamageMultiplier = state
+    if state then
+        ApplyDamageMultiplier()
+    end
+end)
+
+CombatSection:NewSlider("Multiplier Value", "Set damage multiplier", 100, 1, function(value)
+    MultiplierValue = value
+end)
+
+CombatSection:NewToggle("God Mode", "Become invincible", function(state)
+    GodMode = state
+    if state then
         while GodMode do
             local character = game.Players.LocalPlayer.Character
             if character then
@@ -144,12 +143,13 @@ function ApplyGodMode()
             end
             wait(0.5)
         end
-    end)
-end
+    end
+end)
 
--- ФУНКЦИИ ПЕРЕДВИЖЕНИЯ
-function ApplySpeed()
-    spawn(function()
+-- Кнопки Movement
+MovementSection:NewToggle("Speed Hack", "Increase movement speed", function(state)
+    SpeedEnabled = state
+    if state then
         while SpeedEnabled do
             local character = game.Players.LocalPlayer.Character
             if character then
@@ -160,11 +160,21 @@ function ApplySpeed()
             end
             wait(0.1)
         end
-    end)
-end
+    else
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChild("Humanoid") then
+            character.Humanoid.WalkSpeed = 16
+        end
+    end
+end)
 
-function ApplyJump()
-    spawn(function()
+MovementSection:NewSlider("Walk Speed", "Set walk speed", 100, 16, function(value)
+    WalkSpeed = value
+end)
+
+MovementSection:NewToggle("Super Jump", "Increase jump power", function(state)
+    JumpEnabled = state
+    if state then
         while JumpEnabled do
             local character = game.Players.LocalPlayer.Character
             if character then
@@ -175,293 +185,41 @@ function ApplyJump()
             end
             wait(0.1)
         end
-    end)
-end
-
--- ФУНКЦИИ ТЕЛЕПОРТА
-function TeleportToPosition(positionName)
-    local character = game.Players.LocalPlayer.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        if positionName == "Shop" then
-            -- Телепорт к магазину
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("Model") and string.find(obj.Name:lower(), "shop") then
-                    character.HumanoidRootPart.CFrame = obj:GetPivot()
-                    break
-                end
-            end
-        elseif positionName == "Garden" then
-            -- Телепорт к саду
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("Part") and string.find(obj.Name:lower(), "garden") then
-                    character.HumanoidRootPart.CFrame = obj.CFrame
-                    break
-                end
-            end
-        elseif positionName == "Spawn" then
-            -- Телепорт на спавн
-            character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
-        elseif positionName == "Boss" then
-            -- Телепорт к боссу
-            for _, obj in pairs(workspace:GetDescendants()) do
-                if obj:IsA("Model") and string.find(obj.Name:lower(), "boss") then
-                    character.HumanoidRootPart.CFrame = obj:GetPivot()
-                    break
-                end
-            end
+    else
+        local character = game.Players.LocalPlayer.Character
+        if character and character:FindFirstChild("Humanoid") then
+            character.Humanoid.JumpPower = 50
         end
     end
-end
+end)
 
--- КНОПКИ АВТО-ФАРМА
-FarmSection:CreateToggle({
-    Name = "Auto Buy Plants",
-    CurrentValue = false,
-    Callback = function(Value)
-        AutoBuy = Value
-        if Value then
-            Rayfield:Notify({
-                Title = "Auto Buy Started",
-                Content = "Automatically buying plants...",
-                Duration = 3,
-            })
-            BuyAllPlants()
-        else
-            Rayfield:Notify({
-                Title = "Auto Buy Stopped",
-                Content = "Stopped buying plants",
-                Duration = 2,
-            })
-        end
-    end
-})
+MovementSection:NewSlider("Jump Power", "Set jump power", 200, 50, function(value)
+    JumpPower = value
+end)
 
-FarmSection:CreateToggle({
-    Name = "Auto Plant Seeds",
-    CurrentValue = false,
-    Callback = function(Value)
-        AutoPlant = Value
-        if Value then
-            PlantAllSeeds()
-        end
-    end
-})
+-- Кнопки Settings
+ConfigSection:NewToggle("Anti-AFK", "Prevent AFK kick", function(state)
+    AntiAFK = state
+end)
 
-FarmSection:CreateToggle({
-    Name = "Auto Collect Coins",
-    CurrentValue = false,
-    Callback = function(Value)
-        AutoCollect = Value
-        if Value then
-            CollectAllCoins()
-        end
-    end
-})
-
--- КНОПКИ БОЯ
-CombatSection:CreateToggle({
-    Name = "Damage Multiplier",
-    CurrentValue = false,
-    Callback = function(Value)
-        DamageMultiplier = Value
-        if Value then
-            ApplyDamageMultiplier()
-        end
-    end
-})
-
-CombatSection:CreateToggle({
-    Name = "God Mode",
-    CurrentValue = false,
-    Callback = function(Value)
-        GodMode = Value
-        if Value then
-            ApplyGodMode()
-        end
-    end
-})
-
-CombatSection:CreateSlider({
-    Name = "Damage Multiplier Value",
-    Range = {1, 100},
-    Increment = 1,
-    Suffix = "x",
-    CurrentValue = 10,
-    Callback = function(Value)
-        MultiplierValue = Value
-    end
-})
-
--- КНОПКИ ПЕРЕДВИЖЕНИЯ
-MovementSection:CreateToggle({
-    Name = "Speed Hack",
-    CurrentValue = false,
-    Callback = function(Value)
-        SpeedEnabled = Value
-        if Value then
-            ApplySpeed()
-        else
-            local character = game.Players.LocalPlayer.Character
-            if character and character:FindFirstChild("Humanoid") then
-                character.Humanoid.WalkSpeed = 16
-            end
-        end
-    end
-})
-
-MovementSection:CreateSlider({
-    Name = "Walk Speed",
-    Range = {16, 200},
-    Increment = 1,
-    Suffix = "studs",
-    CurrentValue = 50,
-    Callback = function(Value)
-        WalkSpeed = Value
-        if SpeedEnabled then
-            ApplySpeed()
-        end
-    end
-})
-
-MovementSection:CreateToggle({
-    Name = "Super Jump",
-    CurrentValue = false,
-    Callback = function(Value)
-        JumpEnabled = Value
-        if Value then
-            ApplyJump()
-        else
-            local character = game.Players.LocalPlayer.Character
-            if character and character:FindFirstChild("Humanoid") then
-                character.Humanoid.JumpPower = 50
-            end
-        end
-    end
-})
-
-MovementSection:CreateSlider({
-    Name = "Jump Power",
-    Range = {50, 200},
-    Increment = 1,
-    Suffix = "power",
-    CurrentValue = 50,
-    Callback = function(Value)
-        JumpPower = Value
-        if JumpEnabled then
-            ApplyJump()
-        end
-    end
-})
-
--- КНОПКИ ТЕЛЕПОРТА
-LocationSection:CreateButton({
-    Name = "Teleport to Shop",
-    Callback = function()
-        TeleportToPosition("Shop")
-        Rayfield:Notify({
-            Title = "Teleported",
-            Content = "Teleported to Shop",
-            Duration = 2,
-        })
-    end
-})
-
-LocationSection:CreateButton({
-    Name = "Teleport to Garden",
-    Callback = function()
-        TeleportToPosition("Garden")
-        Rayfield:Notify({
-            Title = "Teleported",
-            Content = "Teleported to Garden",
-            Duration = 2,
-        })
-    end
-})
-
-LocationSection:CreateButton({
-    Name = "Teleport to Spawn",
-    Callback = function()
-        TeleportToPosition("Spawn")
-        Rayfield:Notify({
-            Title = "Teleported",
-            Content = "Teleported to Spawn",
-            Duration = 2,
-        })
-    end
-})
-
-LocationSection:CreateButton({
-    Name = "Teleport to Boss",
-    Callback = function()
-        TeleportToPosition("Boss")
-        Rayfield:Notify({
-            Title = "Teleported",
-            Content = "Teleported to Boss",
-            Duration = 2,
-        })
-    end
-})
-
--- КНОПКИ НАСТРОЕК
-ConfigSection:CreateToggle({
-    Name = "Anti-AFK",
-    CurrentValue = true,
-    Callback = function(Value)
-        AntiAFK = Value
-    end
-})
-
-ConfigSection:CreateKeybind({
-    Name = "Toggle UI Keybind",
-    CurrentKeybind = Enum.KeyCode.RightControl,
-    HoldToInteract = false,
-    Callback = function(Keybind)
-        Rayfield:Toggle()
-    end
-})
-
-ConfigSection:CreateButton({
-    Name = "Save Settings",
-    Callback = function()
-        Rayfield:Notify({
-            Title = "Settings Saved",
-            Content = "Your settings have been saved!",
-            Duration = 3,
-        })
-    end
-})
-
-ConfigSection:CreateButton({
-    Name = "Destroy UI",
-    Callback = function()
-        Rayfield:Destroy()
-    end
-})
+ConfigSection:NewKeybind("Toggle Menu", "Toggle menu visibility", Enum.KeyCode.RightControl, function()
+    Library:ToggleUI()
+end)
 
 -- Анти-АФК система
 spawn(function()
     while true do
         if AntiAFK then
-            pcall(function()
-                game:GetService("VirtualInputManager"):SendKeyEvent(true, "W", false, game)
-                wait(0.1)
-                game:GetService("VirtualInputManager"):SendKeyEvent(false, "W", false, game)
-                wait(0.1)
-                game:GetService("VirtualInputManager"):SendKeyEvent(true, "S", false, game)
-                wait(0.1)
-                game:GetService("VirtualInputManager"):SendKeyEvent(false, "S", false, game)
-            end)
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, "W", false, game)
+            wait(0.1)
+            game:GetService("VirtualInputManager"):SendKeyEvent(false, "W", false, game)
+            wait(0.1)
+            game:GetService("VirtualInputManager"):SendKeyEvent(true, "S", false, game)
+            wait(0.1)
+            game:GetService("VirtualInputManager"):SendKeyEvent(false, "S", false, game)
         end
-        wait(25)
+        wait(30)
     end
 end)
 
--- Уведомление о загрузке
-Rayfield:Notify({
-    Title = "Plants vs Brainrots Loaded!",
-    Content = "All functions are now active!",
-    Duration = 5,
-})
-
--- Загрузка конфигурации
-Rayfield:LoadConfiguration()
+print("Plants vs Brainrots menu loaded successfully!")
