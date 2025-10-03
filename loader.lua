@@ -1,10 +1,10 @@
--- Plants vs Brainrots - Rayfield Ultimate Menu WITH WORKING BUTTONS
+-- Plants vs Brainrots - Rayfield Menu WITHOUT EMOJI
 local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
 local Window = Rayfield:CreateWindow({
-   Name = "🌿 PLANTS vs BRAINROTS | RAYFIELD",
+   Name = "PLANTS vs BRAINROTS | RAYFIELD",
    LoadingTitle = "Plants vs Brainrots Ultimate",
-   LoadingSubtitle = "Loading Rayfield Interface...",
+   LoadingSubtitle = "Loading Interface...",
    ConfigurationSaving = {
       Enabled = true,
       FolderName = "PvBRayfield",
@@ -19,18 +19,17 @@ local Window = Rayfield:CreateWindow({
 })
 
 -- Табы
-local MainTab = Window:CreateTab("🏠 Main")
+local MainTab = Window:CreateTab("Main")
 local FarmSection = MainTab:CreateSection("Auto Farm")
 local CombatSection = MainTab:CreateSection("Combat")
 
-local PlayerTab = Window:CreateTab("🎮 Player")
+local PlayerTab = Window:CreateTab("Player")
 local MovementSection = PlayerTab:CreateSection("Movement")
-local VisualSection = PlayerTab:CreateSection("Visual")
 
-local TeleportTab = Window:CreateTab("📍 Teleport")
+local TeleportTab = Window:CreateTab("Teleport")
 local LocationSection = TeleportTab:CreateSection("Locations")
 
-local SettingsTab = Window:CreateTab("⚙️ Settings")
+local SettingsTab = Window:CreateTab("Settings")
 local ConfigSection = SettingsTab:CreateSection("Configuration")
 
 -- Переменные
@@ -202,13 +201,21 @@ function TeleportToPosition(positionName)
         elseif positionName == "Spawn" then
             -- Телепорт на спавн
             character.HumanoidRootPart.CFrame = CFrame.new(0, 10, 0)
+        elseif positionName == "Boss" then
+            -- Телепорт к боссу
+            for _, obj in pairs(workspace:GetDescendants()) do
+                if obj:IsA("Model") and string.find(obj.Name:lower(), "boss") then
+                    character.HumanoidRootPart.CFrame = obj:GetPivot()
+                    break
+                end
+            end
         end
     end
 end
 
 -- КНОПКИ АВТО-ФАРМА
 FarmSection:CreateToggle({
-    Name = "🛒 Auto Buy Plants",
+    Name = "Auto Buy Plants",
     CurrentValue = false,
     Callback = function(Value)
         AutoBuy = Value
@@ -217,7 +224,6 @@ FarmSection:CreateToggle({
                 Title = "Auto Buy Started",
                 Content = "Automatically buying plants...",
                 Duration = 3,
-                Image = 4483362458,
             })
             BuyAllPlants()
         else
@@ -225,14 +231,13 @@ FarmSection:CreateToggle({
                 Title = "Auto Buy Stopped",
                 Content = "Stopped buying plants",
                 Duration = 2,
-                Image = 4483362458,
             })
         end
     end
 })
 
 FarmSection:CreateToggle({
-    Name = "🌱 Auto Plant Seeds",
+    Name = "Auto Plant Seeds",
     CurrentValue = false,
     Callback = function(Value)
         AutoPlant = Value
@@ -243,7 +248,7 @@ FarmSection:CreateToggle({
 })
 
 FarmSection:CreateToggle({
-    Name = "💰 Auto Collect Coins",
+    Name = "Auto Collect Coins",
     CurrentValue = false,
     Callback = function(Value)
         AutoCollect = Value
@@ -255,7 +260,7 @@ FarmSection:CreateToggle({
 
 -- КНОПКИ БОЯ
 CombatSection:CreateToggle({
-    Name = "💥 Damage Multiplier",
+    Name = "Damage Multiplier",
     CurrentValue = false,
     Callback = function(Value)
         DamageMultiplier = Value
@@ -266,7 +271,7 @@ CombatSection:CreateToggle({
 })
 
 CombatSection:CreateToggle({
-    Name = "🛡️ God Mode",
+    Name = "God Mode",
     CurrentValue = false,
     Callback = function(Value)
         GodMode = Value
@@ -277,7 +282,7 @@ CombatSection:CreateToggle({
 })
 
 CombatSection:CreateSlider({
-    Name = "Damage Multiplier",
+    Name = "Damage Multiplier Value",
     Range = {1, 100},
     Increment = 1,
     Suffix = "x",
@@ -289,7 +294,7 @@ CombatSection:CreateSlider({
 
 -- КНОПКИ ПЕРЕДВИЖЕНИЯ
 MovementSection:CreateToggle({
-    Name = "🚀 Speed Hack",
+    Name = "Speed Hack",
     CurrentValue = false,
     Callback = function(Value)
         SpeedEnabled = Value
@@ -319,7 +324,7 @@ MovementSection:CreateSlider({
 })
 
 MovementSection:CreateToggle({
-    Name = "🦘 Super Jump",
+    Name = "Super Jump",
     CurrentValue = false,
     Callback = function(Value)
         JumpEnabled = Value
@@ -350,47 +355,56 @@ MovementSection:CreateSlider({
 
 -- КНОПКИ ТЕЛЕПОРТА
 LocationSection:CreateButton({
-    Name = "🏪 Teleport to Shop",
+    Name = "Teleport to Shop",
     Callback = function()
         TeleportToPosition("Shop")
         Rayfield:Notify({
             Title = "Teleported",
             Content = "Teleported to Shop",
             Duration = 2,
-            Image = 4483362458,
         })
     end
 })
 
 LocationSection:CreateButton({
-    Name = "🌿 Teleport to Garden",
+    Name = "Teleport to Garden",
     Callback = function()
         TeleportToPosition("Garden")
         Rayfield:Notify({
             Title = "Teleported",
             Content = "Teleported to Garden",
             Duration = 2,
-            Image = 4483362458,
         })
     end
 })
 
 LocationSection:CreateButton({
-    Name = "🚩 Teleport to Spawn",
+    Name = "Teleport to Spawn",
     Callback = function()
         TeleportToPosition("Spawn")
         Rayfield:Notify({
             Title = "Teleported",
             Content = "Teleported to Spawn",
             Duration = 2,
-            Image = 4483362458,
+        })
+    end
+})
+
+LocationSection:CreateButton({
+    Name = "Teleport to Boss",
+    Callback = function()
+        TeleportToPosition("Boss")
+        Rayfield:Notify({
+            Title = "Teleported",
+            Content = "Teleported to Boss",
+            Duration = 2,
         })
     end
 })
 
 -- КНОПКИ НАСТРОЕК
 ConfigSection:CreateToggle({
-    Name = "🔄 Anti-AFK",
+    Name = "Anti-AFK",
     CurrentValue = true,
     Callback = function(Value)
         AntiAFK = Value
@@ -398,7 +412,7 @@ ConfigSection:CreateToggle({
 })
 
 ConfigSection:CreateKeybind({
-    Name = "Toggle UI",
+    Name = "Toggle UI Keybind",
     CurrentKeybind = Enum.KeyCode.RightControl,
     HoldToInteract = false,
     Callback = function(Keybind)
@@ -407,19 +421,18 @@ ConfigSection:CreateKeybind({
 })
 
 ConfigSection:CreateButton({
-    Name = "💾 Save Settings",
+    Name = "Save Settings",
     Callback = function()
         Rayfield:Notify({
             Title = "Settings Saved",
             Content = "Your settings have been saved!",
             Duration = 3,
-            Image = 4483362458,
         })
     end
 })
 
 ConfigSection:CreateButton({
-    Name = "🗑️ Destroy UI",
+    Name = "Destroy UI",
     Callback = function()
         Rayfield:Destroy()
     end
@@ -445,10 +458,9 @@ end)
 
 -- Уведомление о загрузке
 Rayfield:Notify({
-    Title = "🌿 Plants vs Brainrots Loaded!",
+    Title = "Plants vs Brainrots Loaded!",
     Content = "All functions are now active!",
     Duration = 5,
-    Image = 4483362458,
 })
 
 -- Загрузка конфигурации
